@@ -8,7 +8,7 @@
    更新は「新しい版を待機 → 画面の［更新する］で切り替え」。
    index.html を直したら、下の VERSION を必ず上げること。
    ------------------------------------------------------------ */
-const VERSION = '0.4.0';
+const VERSION = '0.5.0';
 const PREFIX = 'todotiles-';
 const CACHE = PREFIX + 'v' + VERSION;
 const ASSETS = ['./', './index.html', './manifest.json'];

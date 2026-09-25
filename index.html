@@ -16,8 +16,9 @@
    1. デザイントークン（ライト / ダーク）
    ===================================================================== */
 :root {
-  --bg: #f3f4f7; --surface: #ffffff; --surface2: #eceef2; --text: #1b1d22; --muted: #6b7280;
-  --line: #e2e4e9; --accent: #4f6bff; --accent-soft: #e6eaff; --ok: #1f9d63; --danger: #e0484d; --warn: #e8900c;
+  --bg: #f3f4f7; --surface: #ffffff; --surface2: #eceef2; --text: #1b1d22; --muted: #5f6673;
+  --line: #e2e4e9; --accent: #3f5ae8; --accent-soft: #e6eaff; --ok: #17875a; --danger: #c9373c; --warn: #b86a00;
+  --on-accent: #ffffff; --on-danger: #ffffff; --on-ok: #ffffff;   /* 色付き背景の上の文字 */
   --ring-bg: #e6e8ee; --toast: #23262d; --toast-link: #9db4ff;
   --shadow: 0 1px 2px rgba(20,24,40,.06), 0 4px 14px rgba(20,24,40,.06);
   --shadow-lg: 0 10px 40px rgba(20,24,40,.22);
@@ -30,6 +31,7 @@
     --bg: #111317; --surface: #1b1e24; --surface2: #262a33; --text: #e8eaed; --muted: #9aa1ab;
     --line: #2e333c; --accent: #7d95ff; --accent-soft: #252c47; --ok: #3cc585; --danger: #ff6b6f; --warn: #ffb03b;
     --ring-bg: #2c313b; --toast: #3a3f4a; --toast-link: #b4c5ff;
+    --on-accent: #10131a; --on-danger: #10131a; --on-ok: #10131a;
     --shadow: 0 1px 2px rgba(0,0,0,.4), 0 4px 14px rgba(0,0,0,.25);
     --shadow-lg: 0 10px 40px rgba(0,0,0,.6);
     color-scheme: dark;
@@ -39,6 +41,7 @@
   --bg: #111317; --surface: #1b1e24; --surface2: #262a33; --text: #e8eaed; --muted: #9aa1ab;
   --line: #2e333c; --accent: #7d95ff; --accent-soft: #252c47; --ok: #3cc585; --danger: #ff6b6f; --warn: #ffb03b;
   --ring-bg: #2c313b; --toast: #3a3f4a; --toast-link: #b4c5ff;
+    --on-accent: #10131a; --on-danger: #10131a; --on-ok: #10131a;
   --shadow: 0 1px 2px rgba(0,0,0,.4), 0 4px 14px rgba(0,0,0,.25);
   --shadow-lg: 0 10px 40px rgba(0,0,0,.6);
   color-scheme: dark;
@@ -55,6 +58,13 @@ body {
   font-size: 15px; line-height: 1.5; -webkit-tap-highlight-color: transparent;
 }
 button { font: inherit; color: inherit; cursor: pointer; }
+/* ダブルタップ拡大の遅延をなくす／長押しのプレビューを出さない */
+button, [role="button"], a, label, .mcell { touch-action: manipulation; }
+.tile, .task-body, .shop-item, .inst, .handle { -webkit-touch-callout: none; }
+/* 押した感触（控えめに） */
+.tile-main:active, .shop-main:active, .mcell:active, .freq-chip:active, .btn:active { transform: scale(.97); }
+.tile-main, .shop-main, .mcell, .freq-chip, .btn { transition: transform .1s ease; }
+[role="button"]:focus-visible { outline: 2.5px solid var(--accent); outline-offset: -2px; border-radius: 12px; }
 button:focus-visible, a:focus-visible, input:focus-visible, select:focus-visible, textarea:focus-visible, [tabindex]:focus-visible {
   outline: 2.5px solid var(--accent); outline-offset: 2px;
 }
@@ -65,7 +75,7 @@ svg.ico { width: 24px; height: 24px; fill: none; stroke: currentColor; stroke-wi
 /* =====================================================================
    3. レイアウト（スマホ1カラム / PC 2カラム）
    ===================================================================== */
-#main { max-width: 720px; margin: 0 auto; padding-bottom: calc(var(--nav-h) + env(safe-area-inset-bottom) + 24px); }
+#main { max-width: 720px; margin: 0 auto; padding-left: env(safe-area-inset-left); padding-right: env(safe-area-inset-right); padding-bottom: calc(var(--nav-h) + env(safe-area-inset-bottom) + 24px); }
 #paneB { display: none; }
 @media (min-width: 900px) {
   #main.split { max-width: 1440px; display: grid; grid-template-columns: minmax(380px, 5fr) 6fr; height: 100vh; height: 100dvh; padding-bottom: 0; }
@@ -82,7 +92,7 @@ svg.ico { width: 24px; height: 24px; fill: none; stroke: currentColor; stroke-wi
   -webkit-backdrop-filter: blur(14px); backdrop-filter: blur(14px);
 }
 .ph-title { flex: 1; min-width: 0; padding-left: 8px; display: flex; flex-direction: column; line-height: 1.25; }
-.ph-title b { font-size: 20px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.ph-title h1 { margin: 0; font-size: 20px; line-height: 1.25; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
 .ph-title small { color: var(--muted); font-size: 12.5px; }
 .ph-list { display: flex; align-items: center; gap: 10px; flex-direction: row; }
 .ph-list .ph-emoji { font-size: 28px; line-height: 1; }
@@ -90,7 +100,7 @@ svg.ico { width: 24px; height: 24px; fill: none; stroke: currentColor; stroke-wi
 .icon-btn:hover { background: var(--surface2); }
 .txt-btn { min-height: 44px; padding: 0 14px; border: 0; background: none; color: var(--accent); font-weight: 700; border-radius: 12px; }
 .txt-btn:hover { background: var(--accent-soft); }
-.txt-btn[aria-pressed="true"] { background: var(--accent); color: #fff; }
+.txt-btn[aria-pressed="true"] { background: var(--accent); color: var(--on-accent); }
 
 /* =====================================================================
    4. ボトムナビ（片手操作用：主要ボタンは下部）
@@ -105,7 +115,7 @@ svg.ico { width: 24px; height: 24px; fill: none; stroke: currentColor; stroke-wi
 .nav-btn { height: 100%; min-height: 44px; border: 0; background: none; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 2px; font-size: 11px; color: var(--muted); }
 .nav-btn[aria-current="page"] { color: var(--accent); font-weight: 700; }
 .fab {
-  justify-self: center; width: 60px; height: 60px; border-radius: 50%; border: 0; background: var(--accent); color: #fff;
+  justify-self: center; width: 60px; height: 60px; border-radius: 50%; border: 0; background: var(--accent); color: var(--on-accent);
   display: grid; place-items: center; box-shadow: 0 6px 18px color-mix(in srgb, var(--accent) 45%, transparent); transform: translateY(-14px);
   transition: transform .15s;
 }
@@ -168,8 +178,8 @@ svg.ico { width: 24px; height: 24px; fill: none; stroke: currentColor; stroke-wi
 .task { position: relative; border-radius: 16px; overflow: hidden; --c: var(--accent); }
 .swipe-bg { position: absolute; inset: 0; display: none; align-items: center; padding: 0 22px; color: #fff; font-weight: 700; }
 .task.swiping .swipe-bg { display: flex; }
-.task[data-swipe="left"] .swipe-bg { background: var(--danger); justify-content: flex-end; }
-.task[data-swipe="right"] .swipe-bg { background: var(--ok); justify-content: flex-start; }
+.task[data-swipe="left"] .swipe-bg { background: var(--danger); justify-content: flex-end; color: var(--on-danger); }
+.task[data-swipe="right"] .swipe-bg { background: var(--ok); justify-content: flex-start; color: var(--on-ok); }
 .task[data-swipe="left"] .sb-r, .task[data-swipe="right"] .sb-l { display: inline; }
 .sb-l, .sb-r { display: none; }
 .task.armed .swipe-bg span { transform: scale(1.15); }
@@ -200,7 +210,7 @@ svg.ico { width: 24px; height: 24px; fill: none; stroke: currentColor; stroke-wi
 .handle svg { width: 20px; height: 20px; fill: currentColor; stroke: none; }
 .subs { padding: 0 8px 8px 0; margin-top: -4px; }
 .sub { display: flex; align-items: center; min-height: 44px; }
-.sub-chk { flex: none; width: 40px; min-height: 44px; border: 0; background: none; display: grid; place-items: center; margin-left: -8px; }
+.sub-chk { flex: none; width: 44px; min-height: 44px; border: 0; background: none; display: grid; place-items: center; margin-left: -8px; }
 .sub-chk i { width: 18px; height: 18px; border-radius: 5px; border: 2px solid var(--muted); display: grid; place-items: center; }
 .sub-chk i svg { width: 12px; height: 12px; stroke: #fff; stroke-width: 3.4; fill: none; opacity: 0; }
 .sub.done .sub-chk i { background: var(--c); border-color: var(--c); }
@@ -273,9 +283,9 @@ select.inp { background-image: linear-gradient(45deg, transparent 50%, var(--mut
 .seg button[aria-pressed="true"] { background: var(--surface); box-shadow: var(--shadow); font-weight: 700; }
 .seg-note { font-size: 12.5px; color: var(--muted); margin: 6px 2px 0; }
 .btn { min-height: 48px; padding: 0 20px; border: 0; border-radius: 14px; background: var(--surface2); font-weight: 700; }
-.btn.primary { background: var(--accent); color: #fff; }
+.btn.primary { background: var(--accent); color: var(--on-accent); }
 .btn.danger { background: none; color: var(--danger); }
-.btn.danger-fill { background: var(--danger); color: #fff; }
+.btn.danger-fill { background: var(--danger); color: var(--on-danger); }
 .btn:disabled { opacity: .45; }
 .link-btn { border: 0; background: none; color: var(--accent); font-weight: 600; min-height: 44px; padding: 0 6px; }
 .emoji-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(44px, 1fr)); gap: 4px; margin-top: 8px; }
@@ -365,7 +375,7 @@ body[data-view="calendar"] #main { max-width: 1280px; }
 @media (min-width: 900px) {
   .week { display: grid; grid-template-columns: repeat(7, minmax(0, 1fr)); gap: 8px; align-items: start; }
   .wday { min-height: 240px; }
-  .wday .inst .chk { width: 36px; }
+  .wday .inst .chk { width: 44px; }
   .wday .inst-meta { display: none; }
   .wday .inst-t { font-size: 13.5px; }
   .wday .inst-ico { font-size: 15px; }
@@ -382,7 +392,7 @@ body[data-view="calendar"] #main { max-width: 1280px; }
 @media (min-width: 900px) { .mcell { min-height: 96px; } .micons { font-size: 18px !important; } }
 .mcell.out { opacity: .38; }
 .mcell.is-today { box-shadow: inset 0 0 0 2px var(--accent); }
-.mcell.is-today .mnum { background: var(--accent); color: #fff !important; }
+.mcell.is-today .mnum { background: var(--accent); color: var(--on-accent) !important; }
 .mcell.all-done .mnum::after { content: '✓'; font-size: 9px; color: var(--ok); margin-left: 1px; }
 .mcell:hover { background: var(--surface2); }
 .mnum { font-size: 13px; font-weight: 700; min-width: 22px; height: 22px; line-height: 22px; border-radius: 11px; padding: 0 3px; }
@@ -401,7 +411,7 @@ body[data-view="calendar"] #main { max-width: 1280px; }
 .al-ico { font-size: 26px; animation: ring 1s ease 2; }
 .al-text { flex: 1; min-width: 0; font-size: 15px; line-height: 1.35; }
 .al-text small { display: block; color: var(--muted); font-size: 12px; }
-.al-btn { min-height: 44px; padding: 0 14px; border: 0; border-radius: 12px; background: var(--c); color: #fff; font-weight: 800; }
+.al-btn { min-height: 44px; padding: 0 14px; border: 0; border-radius: 12px; background: var(--accent); color: var(--on-accent); font-weight: 800; }
 .al-x { min-width: 44px; min-height: 44px; border: 0; background: none; color: var(--muted); border-radius: 12px; }
 @keyframes alarmIn { from { transform: translateY(-20px); opacity: 0; } }
 @keyframes ring { 20%, 60% { transform: rotate(-15deg); } 40%, 80% { transform: rotate(15deg); } }
@@ -436,7 +446,7 @@ body[data-view="calendar"] #main { max-width: 1280px; }
 .streak-days { display: grid; grid-template-columns: repeat(14, minmax(0, 1fr)); gap: 3px; }
 .sd { display: flex; flex-direction: column; align-items: center; gap: 2px; }
 .sd i { width: 100%; max-width: 26px; aspect-ratio: 1; border-radius: 7px; display: grid; place-items: center; font-style: normal; font-size: 12px; font-weight: 800; background: var(--surface2); color: var(--muted); }
-.sd.ok i { background: var(--ok); color: #fff; }
+.sd.ok i { background: var(--ok); color: var(--on-ok); }
 .sd.miss i { background: color-mix(in srgb, var(--danger) 16%, transparent); color: var(--danger); }
 .sd.open i { box-shadow: inset 0 0 0 2px var(--accent); color: var(--accent); background: none; }
 .sd small { font-size: 10px; color: var(--muted); }
@@ -455,10 +465,10 @@ body[data-view="calendar"] #main { max-width: 1280px; }
 #updbar {
   position: fixed; left: 12px; right: 12px; bottom: calc(var(--nav-h) + env(safe-area-inset-bottom) + 72px); z-index: 61; max-width: 520px; margin: 0 auto;
   display: flex; align-items: center; gap: 6px; padding: 4px 6px 4px 16px; min-height: 52px; border-radius: 14px;
-  background: var(--accent); color: #fff; box-shadow: var(--shadow-lg); font-weight: 700; font-size: 14px;
+  background: var(--accent); color: var(--on-accent); box-shadow: var(--shadow-lg); font-weight: 700; font-size: 14px;
 }
 #updbar span { flex: 1; }
-#updbar button { min-height: 44px; min-width: 44px; padding: 0 12px; border: 0; border-radius: 10px; background: rgba(255,255,255,.2); color: #fff; font-weight: 800; }
+#updbar button { min-height: 44px; min-width: 44px; padding: 0 12px; border: 0; border-radius: 10px; background: rgba(255,255,255,.2); color: inherit; font-weight: 800; }
 
 /* =====================================================================
    6-2. 買い物モード
@@ -537,20 +547,27 @@ body.sheet-open #toast { bottom: calc(var(--kb) + env(safe-area-inset-bottom) + 
 
 #errbar {
   position: fixed; left: 0; right: 0; top: 0; z-index: 70; display: flex; align-items: center; gap: 6px;
-  padding: calc(env(safe-area-inset-top) + 8px) 8px 8px 16px; background: var(--danger); color: #fff; font-size: 14px; font-weight: 600; box-shadow: var(--shadow-lg);
+  padding: calc(env(safe-area-inset-top) + 8px) 8px 8px 16px; background: var(--danger); color: var(--on-danger); font-size: 14px; font-weight: 600; box-shadow: var(--shadow-lg);
 }
 #errbar span { flex: 1; }
-#errbar button { min-height: 44px; min-width: 44px; border: 1.5px solid rgba(255,255,255,.7); background: none; color: #fff; border-radius: 10px; padding: 0 12px; font-weight: 700; }
+#errbar button { min-height: 44px; min-width: 44px; border: 1.5px solid currentColor; background: none; color: inherit; border-radius: 10px; padding: 0 12px; font-weight: 700; }
 
 #celebrate { position: fixed; inset: 0; z-index: 45; pointer-events: none; overflow: hidden; }
 .cele-msg {
   position: absolute; left: 50%; top: calc(env(safe-area-inset-top) + 90px); transform: translateX(-50%);
-  padding: 10px 20px; border-radius: 999px; background: var(--ok); color: #fff; font-weight: 800; white-space: nowrap; box-shadow: var(--shadow-lg);
+  padding: 10px 20px; border-radius: 999px; background: var(--ok); color: var(--on-ok); font-weight: 800; white-space: nowrap; box-shadow: var(--shadow-lg);
   animation: celeMsg 2.8s ease forwards;
 }
 .cele-bit { position: absolute; bottom: -40px; font-size: 26px; animation: rise 2.4s ease-out forwards; }
 @keyframes celeMsg { 0% { opacity: 0; transform: translate(-50%, -12px); } 12%, 80% { opacity: 1; transform: translate(-50%, 0); } 100% { opacity: 0; } }
 @keyframes rise { to { transform: translateY(-75vh) rotate(var(--rot)); opacity: 0; } }
+
+/* Windows のハイコントラストなど：影に頼らず枠線で区切る */
+@media (forced-colors: active) {
+  .tile, .task-body, .card, .shop-item, .cal-sec, .wday, .mcell, .hero, .agenda, .stat-tile, .sheet, .dialog, #toast { border: 1px solid CanvasText; }
+  .ring-fg, .ch-bar, .pbar i, .lb-track i { forced-color-adjust: none; }
+  .chk i { border-color: CanvasText; }
+}
 
 @media (prefers-reduced-motion: reduce) {
   *, *::before, *::after { animation-duration: .01ms !important; animation-iteration-count: 1 !important; transition-duration: .01ms !important; }
@@ -590,7 +607,7 @@ body.sheet-open #toast { bottom: calc(var(--kb) + env(safe-area-inset-bottom) + 
    ToDoTiles — フェーズ1
    データ層(IndexedDB) / ホームのタイル / リスト画面 / 完了スタイル3種 / 元に戻す
    ===================================================================== */
-const APP_VERSION = '0.4.0';
+const APP_VERSION = '0.5.0';
 const DB_NAME = 'todotiles';
 const DB_VER = 1;
 const LS_THEME = 'todotiles.theme';   // 起動時のちらつき防止用（本体の設定は IndexedDB）
@@ -708,7 +725,8 @@ const DB = {
 /* =====================================================================
    4. アプリ状態とモデル
    ===================================================================== */
-const COLORS = ['#4f6bff', '#22a06b', '#f59e0b', '#e0484d', '#a855f7', '#14b8a6', '#ec4899', '#64748b'];
+const COLORS = ['#4f6bff', '#22a06b', '#d97706', '#e0484d', '#a855f7', '#0d9488', '#ec4899', '#64748b'];
+const COLOR_MIGRATE = { '#f59e0b': '#d97706', '#14b8a6': '#0d9488' };   // v0.5 で濃くした色
 const EMOJIS = ['🛒', '🏠', '💼', '📚', '⭐', '🍳', '🧺', '🧹', '💊', '🏃', '💰', '🧾', '✈️', '🚗', '🐶', '🌱', '🎮', '🎵', '🎁', '🔧', '📝', '❤️', '👶', '🎓'];
 const STYLE_INFO = {
   vanish: { label: '消える', desc: 'フェードアウトして一覧から消えます（「完了履歴」から確認できます）' },
@@ -719,7 +737,7 @@ const PRIO_LABEL = ['なし', '低', '中', '高'];
 const DEFAULT_SETTINGS = { key: 'settings', theme: 'system', weekStart: 1, defaultCompleteStyle: 'strike', lastListId: null, lastBackupAt: null, calMode: 'today' };
 const DEFAULT_LISTS = [
   ['買い物', '🛒', '#22a06b', 'shopping', 'vanish'],
-  ['家事',   '🏠', '#f59e0b', 'todo', 'check'],
+  ['家事',   '🏠', '#d97706', 'todo', 'check'],
   ['仕事',   '💼', '#4f6bff', 'todo', 'strike'],
   ['勉強',   '📚', '#a855f7', 'todo', 'check'],
   ['その他', '⭐', '#64748b', 'todo', 'strike'],
@@ -1110,6 +1128,9 @@ async function loadAll() {
   if (fixed.length) await DB.write([{ store: 'tasks', put: fixed }]);
   S.tasks.forEach(t => { if (!t.doneDates) t.doneDates = []; });
   S.archive = (kv.find(r => r.key === 'archive') || {}).days || {};
+  const recolored = S.lists.filter(l => COLOR_MIGRATE[l.color]);
+  recolored.forEach(l => { l.color = COLOR_MIGRATE[l.color]; });
+  if (recolored.length) await DB.write([{ store: 'lists', put: recolored }]);
   const meta = kv.find(r => r.key === 'meta');
   S.meta = meta || { key: 'meta', initializedAt: Date.now(), version: APP_VERSION };
   if (!meta) {
@@ -1244,7 +1265,7 @@ function renderHome() {
   const sel = S.route.view === 'list' ? S.route.listId : null;
   return `
   <header class="phead">
-    <div class="ph-title"><b>ToDoTiles</b><small>${fmtLong(today)}</small></div>
+    <div class="ph-title"><h1>ToDoTiles</h1><small>${fmtLong(today)}</small></div>
     <button class="icon-btn" data-act="theme" aria-label="テーマ切替（現在：${THEME_LABEL[S.settings.theme]}）" title="テーマ：${THEME_LABEL[S.settings.theme]}">${themeIco}</button>
     <button class="txt-btn" data-act="home-edit" aria-pressed="${S.homeEdit}">${S.homeEdit ? '完了' : '編集'}</button>
   </header>
@@ -1290,7 +1311,7 @@ function renderPickHint() {
 }
 function renderSoon(view) {
   const m = { stats: ['📊', '統計', 'フェーズ4で追加します'] }[view];
-  return `<header class="phead"><div class="ph-title"><b>${m[1]}</b></div></header>
+  return `<header class="phead"><div class="ph-title"><h1>${m[1]}</h1></div></header>
     <div class="placeholder"><div><div class="big">${m[0]}</div><p>${m[2]}</p></div></div>`;
 }
 
@@ -1298,7 +1319,7 @@ function renderSoon(view) {
 function listHeader(l) {
   return `<header class="phead" style="--c:${esc(l.color)}">
     <button class="icon-btn back-btn" data-act="back" aria-label="ホームへ戻る">${ICON.back}</button>
-    <div class="ph-title ph-list"><span class="ph-emoji" aria-hidden="true">${esc(l.icon)}</span><b>${esc(l.name)}</b></div>
+    <div class="ph-title ph-list"><span class="ph-emoji" aria-hidden="true">${esc(l.icon)}</span><h1>${esc(l.name)}</h1></div>
     <button class="icon-btn" data-act="list-settings" data-id="${l.id}" aria-label="リストの設定">${ICON.more}</button>
   </header>`;
 }
@@ -1414,13 +1435,14 @@ function taskRow(t, l, sortable, showDoneDate = false) {
   if (repeatLabel(t)) meta.push(`<span title="繰り返し">🔁 ${esc(repeatLabel(t))}</span>`);
   if (t.note) meta.push('<span title="メモあり">📝 メモ</span>');
   if (subs.length) meta.push(`<button class="sub-toggle" data-act="sub-expand" data-id="${t.id}" aria-expanded="${open}">☑ ${subDone}/${subs.length} ${open ? '▾' : '▸'}</button>`);
+  const ariaEdit = [t.title, due && `期限 ${due.label}${due.overdue ? '（期限切れ）' : ''}`, t.priority && `優先度${PRIO_LABEL[t.priority]}`, repeatLabel(t)].filter(Boolean).join('、') + ' を編集';
   const prio = t.priority ? `<span class="prio-dot p${t.priority}" title="優先度：${PRIO_LABEL[t.priority]}"></span><span class="sr-only">優先度${PRIO_LABEL[t.priority]}</span>` : '';
   return `<div class="task ${t.done ? 'done' : ''}" ${sortable ? 'data-sort-item' : ''} data-id="${t.id}" style="--c:${esc(l.color)}">
     <div class="swipe-bg" aria-hidden="true"><span class="sb-l">✓ ${t.done ? '未完了に戻す' : '完了'}</span><span class="sb-r">🗑 削除</span></div>
     <div class="task-body">
       <button class="chk" data-act="toggle" data-id="${t.id}" role="checkbox" aria-checked="${t.done}" aria-label="${esc(t.title)} を${t.done ? '未完了に戻す' : '完了にする'}"><i>${ICON.check}</i></button>
       <div class="task-col">
-        <div class="task-main" data-act="edit-task" data-id="${t.id}">
+        <div class="task-main" data-act="edit-task" data-id="${t.id}" role="button" tabindex="0" aria-label="${esc(ariaEdit)}" title="Enterで編集／Alt+↑↓で並べ替え">
           <div class="task-title">${prio}<span class="tt">${esc(t.title)}</span></div>
           <div class="task-meta">${meta.join('')}</div>
         </div>
@@ -1470,13 +1492,13 @@ function renderCalendar() {
   const [title, sub] = calTitle();
   const modes = [['today', '今日'], ['week', '週間'], ['month', '月間']];
   let html = `<header class="phead">
-    <div class="ph-title"><b>${esc(title)}</b>${sub ? `<small>${esc(sub)}</small>` : ''}</div>
+    <div class="ph-title"><h1>${esc(title)}</h1>${sub ? `<small>${esc(sub)}</small>` : ''}</div>
     <button class="icon-btn" data-act="cal-move" data-d="-1" aria-label="前へ">${ICON.back}</button>
     <button class="txt-btn" data-act="cal-today">今日</button>
     <button class="icon-btn" data-act="cal-move" data-d="1" aria-label="次へ"><span style="transform:scaleX(-1);display:inline-grid">${ICON.back}</span></button>
   </header>
-  <div class="cal-modes"><div class="seg" role="tablist">${modes.map(([k, v]) =>
-    `<button role="tab" data-act="cal-mode" data-m="${k}" aria-pressed="${m === k}" aria-selected="${m === k}">${v}</button>`).join('')}</div></div>`;
+  <div class="cal-modes"><div class="seg" role="group" aria-label="表示の切り替え">${modes.map(([k, v]) =>
+    `<button data-act="cal-mode" data-m="${k}" aria-pressed="${m === k}">${v}</button>`).join('')}</div></div>`;
   html += m === 'today' ? renderDay(S.calAnchor) : m === 'week' ? renderWeek(S.calAnchor) : renderMonth(S.calAnchor);
   return html;
 }
@@ -1704,7 +1726,7 @@ function renderStats() {
   const lmax = Math.max(1, ...lrows.map(x => x.n));
   const stateLabel = { ok: '達成', miss: '未達', open: '進行中', none: '予定なし' };
 
-  return `<header class="phead"><div class="ph-title"><b>統計</b><small>完了の記録</small></div></header>
+  return `<header class="phead"><div class="ph-title"><h1>統計</h1><small>完了の記録</small></div></header>
   <div class="stats">
     <div class="stat-tiles">
       <div class="stat-tile"><span>今日</span><b>${sumDay(counts[today])}</b><small>件完了</small></div>
@@ -1748,7 +1770,7 @@ function renderSettings() {
   const persistText = S.persisted === true ? '✅ 許可されています（ブラウザが勝手に消すことはありません）'
     : S.persisted === false ? '⚠ 未許可です。ホーム画面に追加すると許可されやすくなります。定期的なバックアップをおすすめします。'
     : 'このブラウザでは確認できません';
-  return `<header class="phead"><div class="ph-title"><b>設定</b></div></header>
+  return `<header class="phead"><div class="ph-title"><h1>設定</h1></div></header>
   <div class="settings">
     <div class="card"><h3>表示</h3>
       <div class="set-row"><div class="lbl">テーマ</div>${seg('theme', S.settings.theme, [['system', 'OS設定'], ['light', 'ライト'], ['dark', 'ダーク']])}</div>
@@ -2005,6 +2027,12 @@ async function deleteList(id) {
    12. シート（ボトムシート）・確認ダイアログ・右クリックメニュー
    ===================================================================== */
 let sheetState = null;
+/** シート／ダイアログが開いている間は背面を inert に（Tab や読み上げが背面へ行かない） */
+function syncInert() {
+  const dlg = !$('#dialogRoot').hidden, sh = !!sheetState;
+  ['#main', '#nav'].forEach(sel => { $(sel).inert = dlg || sh; });
+  $('#sheetRoot').inert = dlg && sh;
+}
 function openSheet({ title, body, foot = '', onMount, onClose }) {
   closeSheet(true);
   closeMenu();
@@ -2021,6 +2049,7 @@ function openSheet({ title, body, foot = '', onMount, onClose }) {
   const el = root.querySelector('.sheet');
   $$('[data-close]', root).forEach(b => b.addEventListener('click', () => closeSheet()));
   sheetState = { root, el, prevFocus, onClose };
+  syncInert();
   if (onMount) onMount(el);   // iOSでキーボードを出すため、focus はここで同期的に行う
   if (!el.contains(document.activeElement)) el.focus({ preventScroll: true });
 }
@@ -2029,6 +2058,7 @@ function closeSheet(silent = false) {
   const s = sheetState; sheetState = null;
   s.root.innerHTML = ''; s.root.hidden = true;
   document.body.classList.remove('sheet-open');
+  syncInert();
   if (s.onClose) s.onClose();
   if (!silent && s.prevFocus && document.contains(s.prevFocus)) s.prevFocus.focus({ preventScroll: true });
 }
@@ -2045,7 +2075,8 @@ function confirmDialog({ title, message = '', ok = 'OK', cancel = 'キャンセ�
         <div class="row"><button class="btn" data-v="0">${esc(cancel)}</button><button class="btn ${danger ? 'danger-fill' : 'primary'}" data-v="1" ${requireText ? 'disabled' : ''}>${esc(ok)}</button></div>
       </div>`;
     root.hidden = false;
-    const finish = v => { root.hidden = true; root.innerHTML = ''; dialogResolve = null; if (prev && document.contains(prev)) prev.focus({ preventScroll: true }); resolve(v); };
+    syncInert();
+    const finish = v => { root.hidden = true; root.innerHTML = ''; dialogResolve = null; syncInert(); if (prev && document.contains(prev)) prev.focus({ preventScroll: true }); resolve(v); };
     dialogResolve = finish;
     root.onclick = e => { const b = e.target.closest('[data-v]'); if (b && !b.disabled) finish(b.dataset.v === '1'); };
     const ti = root.querySelector('#dlg-text');
@@ -2888,7 +2919,31 @@ document.addEventListener('contextmenu', e => {
   }
 });
 
+/** キーボードでの並べ替え（Alt+↑↓←→）。ドラッグできない人向けの代替手段 */
+async function keyboardMove(item, key) {
+  const box = item.parentElement;
+  const items = [...box.children].filter(c => c.hasAttribute('data-sort-item'));
+  const i = items.indexOf(item);
+  const j = i + (key === 'ArrowUp' || key === 'ArrowLeft' ? -1 : 1);
+  if (j < 0 || j >= items.length) return;
+  if (j < i) items[j].before(item); else items[j].after(item);
+  const id = item.dataset.id, kind = box.dataset.sort;
+  const ids = [...box.children].filter(c => c.hasAttribute('data-sort-item')).map(c => c.dataset.id);
+  await applyReorder(kind, ids);
+  const el = $(`[data-sort="${kind}"] [data-sort-item][data-id="${id}"] :is(.task-main, .tile-main)`);
+  if (el) el.focus();
+  const name = kind === 'lists' ? listById(id)?.name : taskById(id)?.title;
+  showToast(`「${name}」を ${j + 1}番目に移動しました`);
+}
+
 document.addEventListener('keydown', e => {
+  // role="button" の要素は Enter / Space で押せるように
+  const rb = e.target.closest && e.target.closest('[role="button"][data-act]');
+  if (rb && e.target === rb && (e.key === 'Enter' || e.key === ' ') && !isComposingEnter(e)) { e.preventDefault(); rb.click(); return; }
+  if (e.altKey && /^Arrow(Up|Down|Left|Right)$/.test(e.key)) {
+    const item = e.target.closest && e.target.closest('[data-sort-item]');
+    if (item && item.parentElement.dataset.sort) { e.preventDefault(); keyboardMove(item, e.key); return; }
+  }
   // 買い物リスト上部の入力欄（日本語変換中の Enter は無視）
   if (e.target.id === 'shop-input' && e.key === 'Enter' && !isComposingEnter(e)) {
     e.preventDefault(); shopAddFromInput(e.target.dataset.list); return;
