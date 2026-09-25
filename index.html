@@ -290,6 +290,53 @@ select.inp { background-image: linear-gradient(45deg, transparent 50%, var(--mut
 .list-chips button { flex: none; min-height: 44px; padding: 0 14px; border-radius: 999px; border: 1.5px solid var(--line); background: none; font-size: 14px; white-space: nowrap; }
 .list-chips button[aria-pressed="true"] { border-color: var(--c); background: color-mix(in srgb, var(--c) 14%, transparent); font-weight: 700; }
 .qa-fb { min-height: 22px; margin-top: 8px; font-size: 13px; color: var(--ok); }
+.qa-parse { min-height: 44px; margin-top: 10px; }
+.qa-hint { margin: 0; font-size: 12.5px; color: var(--muted); line-height: 1.6; }
+.qa-title { font-size: 14px; color: var(--muted); margin-bottom: 6px; word-break: break-word; }
+.qa-title b { color: var(--text); }
+.pchips { display: flex; flex-wrap: wrap; gap: 6px; }
+.pchip { min-height: 44px; padding: 0 12px; border-radius: 999px; border: 0; background: var(--accent-soft); color: var(--accent); font-size: 13.5px; font-weight: 700; }
+.pchip.off { background: var(--surface2); color: var(--muted); text-decoration: line-through; font-weight: 500; }
+.pchip.warn { background: color-mix(in srgb, var(--warn) 18%, transparent); color: var(--warn); cursor: default; }
+
+/* =====================================================================
+   6-2. 買い物モード
+   ===================================================================== */
+.shop-add { display: flex; gap: 8px; padding: 0 12px 12px; }
+.shop-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(104px, 1fr)); gap: 10px; padding: 0 12px; }
+.shop-item {
+  position: relative; display: flex; flex-direction: column; background: var(--surface); border-radius: 18px; box-shadow: var(--shadow);
+  transition: transform .38s ease, opacity .38s ease;
+}
+.shop-main { flex: 1; border: 0; background: none; border-radius: 18px 18px 0 0; padding: 14px 6px 4px; display: flex; flex-direction: column; align-items: center; gap: 4px; text-align: center; min-height: 104px; }
+.shop-main:hover { background: color-mix(in srgb, var(--c) 7%, transparent); }
+.shop-emoji { font-size: 44px; line-height: 1.1; transition: transform .35s cubic-bezier(.5,-.3,.7,.4), opacity .35s; }
+.shop-main:active .shop-emoji { transform: scale(.9); }
+.shop-name { font-size: 14.5px; font-weight: 700; line-height: 1.3; word-break: break-word; }
+.shop-name .prio-dot { width: 8px; height: 8px; margin-right: 4px; }
+.shop-meta { font-size: 11.5px; color: var(--muted); }
+.shop-edit { position: absolute; top: 0; left: 0; width: 44px; height: 44px; border: 0; background: none; color: var(--muted); font-size: 14px; border-radius: 18px 0 12px 0; opacity: .7; }
+.shop-edit:hover { opacity: 1; background: var(--surface2); }
+.shop-qty { display: flex; align-items: center; justify-content: space-between; }
+.shop-qty span { font-weight: 800; font-size: 14px; min-width: 18px; text-align: center; }
+.shop-qty button { width: 44px; height: 44px; border: 0; background: none; font-size: 20px; font-weight: 700; color: var(--c, var(--accent)); border-radius: 12px; }
+.shop-qty button:hover:not(:disabled) { background: var(--surface2); }
+.shop-qty button:disabled { color: var(--line); cursor: default; }
+.big-qty { background: var(--surface2); border-radius: 12px; }
+.big-qty span { min-width: 40px; }
+.shop-item.bought { transform: scale(.8); opacity: 0; }
+.shop-item.bought .shop-emoji { transform: scale(0) rotate(-20deg); opacity: 0; }
+.freq { display: flex; flex-wrap: wrap; gap: 8px; padding: 0 12px; }
+.freq-chip { display: inline-flex; align-items: center; gap: 6px; min-height: 44px; padding: 0 12px 0 8px; border-radius: 999px; border: 1.5px solid var(--line); background: var(--surface); font-size: 14px; }
+.freq-chip .fe { font-size: 22px; }
+.freq-chip .fc { font-size: 11.5px; color: var(--muted); }
+.freq-chip:hover { border-color: var(--accent); }
+.freq.editing .freq-chip { border-style: dashed; }
+.freq.editing .freq-chip .fc { color: var(--danger); font-size: 14px; font-weight: 700; }
+.bought-list { display: flex; flex-wrap: wrap; gap: 6px; padding: 0 12px; }
+.bought-chip { display: inline-flex; align-items: center; gap: 6px; min-height: 44px; padding: 0 12px 0 8px; border-radius: 12px; border: 0; background: var(--surface2); color: var(--muted); font-size: 13.5px; opacity: .85; }
+.bought-chip span { font-size: 18px; filter: grayscale(.7); }
+.bought-chip small { font-size: 11.5px; }
 
 #menu { position: fixed; z-index: 58; min-width: 210px; padding: 6px; background: var(--surface); border-radius: 14px; box-shadow: var(--shadow-lg); border: 1px solid var(--line); }
 #menu button { display: flex; width: 100%; align-items: center; gap: 10px; min-height: 44px; border: 0; background: none; border-radius: 9px; padding: 0 12px; text-align: left; }
@@ -380,7 +427,7 @@ body.sheet-open #toast { bottom: calc(var(--kb) + env(safe-area-inset-bottom) + 
    ToDoTiles — フェーズ1
    データ層(IndexedDB) / ホームのタイル / リスト画面 / 完了スタイル3種 / 元に戻す
    ===================================================================== */
-const APP_VERSION = '0.1.0';
+const APP_VERSION = '0.2.0';
 const DB_NAME = 'todotiles';
 const DB_VER = 1;
 const LS_THEME = 'todotiles.theme';   // 起動時のちらつき防止用（本体の設定は IndexedDB）
@@ -570,6 +617,203 @@ function dueInfo(t) {
   if (t.dueTime) label += ' ' + t.dueTime;
   const overdue = !t.done && (d < 0 || (d === 0 && !!t.dueTime && t.dueTime < nowHM()));
   return { label, overdue, today: d === 0 };
+}
+function relDate(k) {
+  const d = diffDays(dateKey(), k);
+  return d === 0 ? `今日 ${fmtMD(k)}` : d === 1 ? `明日 ${fmtMD(k)}` : d === 2 ? `明後日 ${fmtMD(k)}` : fmtMD(k);
+}
+
+/** 繰り返しの表示名（展開・日付ごとの完了はフェーズ3） */
+const REPEAT_LABEL = { none: 'なし', daily: '毎日', weekdays: '平日', weekly: '毎週', monthly: '毎月' };
+function repeatLabel(t) {
+  if (!t.repeat || t.repeat === 'none') return '';
+  if (t.repeat === 'weekly' && t.dueDate) return `毎週${WD[weekday(t.dueDate)]}曜`;
+  if (t.repeat === 'monthly' && t.dueDate) return `毎月${+t.dueDate.slice(8)}日`;
+  return REPEAT_LABEL[t.repeat] || '';
+}
+
+/* =====================================================================
+   4-2. 買い物：品名→絵文字の簡易辞書・よく買う物の履歴
+   ===================================================================== */
+/** 表記ゆれ吸収：全角→半角、カタカナ→ひらがな、小文字化、空白除去 */
+function normName(s) {
+  return String(s || '').normalize('NFKC').toLowerCase()
+    .replace(/[ァ-ヶ]/g, c => String.fromCharCode(c.charCodeAt(0) - 0x60))
+    .replace(/\s+/g, '');
+}
+// 上にあるものほど優先（「牛乳」を「牛肉」より先に、など具体的な語を先に置く）
+const EMOJI_DICT = [
+  ['🥛', '牛乳 ミルク ヨーグルト 豆乳'], ['🥚', '卵 たまご 玉子'], ['🍞', 'パン 食パン ロールパン'], ['🥐', 'クロワッサン'],
+  ['🍚', 'お米 米 こめ ごはん ご飯'], ['🍙', 'おにぎり'], ['🍱', '弁当'], ['🍣', '寿司 すし'],
+  ['🥓', 'ベーコン'], ['🌭', 'ソーセージ ウインナー ウィンナー'], ['🍗', '鶏 とり肉 鳥肉 チキン 手羽'], ['🥩', '肉 豚 牛 ひき肉 挽肉 ステーキ'],
+  ['🦐', 'えび 海老'], ['🦑', 'いか イカ'], ['🐟', '魚 さかな 鮭 さけ サーモン さば 鯖 まぐろ 鮪 刺身 あじ ぶり'],
+  ['🥕', 'にんじん 人参'], ['🧅', '玉ねぎ たまねぎ 玉葱'], ['🥔', 'じゃがいも ジャガイモ 芋 いも'], ['🍅', 'トマト'],
+  ['🥒', 'きゅうり 胡瓜'], ['🍆', 'なす 茄子'], ['🫑', 'ピーマン パプリカ'], ['🥦', 'ブロッコリー'], ['🌽', 'とうもろこし コーン'],
+  ['🍄', 'きのこ しいたけ しめじ えのき まいたけ'], ['🧄', 'にんにく'], ['🫚', 'しょうが 生姜'],
+  ['🥬', '野菜 キャベツ レタス 白菜 ほうれん草 小松菜 ねぎ 葱 もやし 水菜 大根'],
+  ['🍎', 'りんご 林檎'], ['🍌', 'バナナ'], ['🍊', 'みかん オレンジ'], ['🍓', 'いちご 苺'], ['🍇', 'ぶどう'], ['🍋', 'レモン'],
+  ['🍑', '桃 もも'], ['🍉', 'すいか スイカ'], ['🍈', 'メロン'], ['🥝', 'キウイ'], ['🍍', 'パイナップル'], ['🥑', 'アボカド'],
+  ['🧀', 'チーズ'], ['🧈', 'バター マーガリン'], ['🫘', '納豆 豆腐 豆 油揚げ'],
+  ['🍜', 'ラーメン うどん そば 蕎麦 麺'], ['🍝', 'パスタ スパゲッティ'], ['🍛', 'カレー'], ['🥟', '餃子 ぎょうざ'], ['🍕', 'ピザ'],
+  ['🧊', '氷 冷凍'], ['💧', '水 ミネラルウォーター'], ['🍵', 'お茶 緑茶 麦茶 茶'], ['☕', 'コーヒー 珈琲'], ['🧃', 'ジュース'],
+  ['🍺', 'ビール 発泡酒'], ['🍷', 'ワイン'], ['🍶', '日本酒 酒'],
+  ['🍫', 'チョコ お菓子 菓子'], ['🍪', 'クッキー ビスケット'], ['🍨', 'アイス'], ['🍰', 'ケーキ'], ['🥜', 'ナッツ ピーナッツ'],
+  ['🧂', '塩 砂糖 醤油 しょうゆ 味噌 みそ 調味料 胡椒 こしょう ソース マヨネーズ ケチャップ 酢 みりん だし'], ['🫒', '油 オリーブオイル'],
+  ['🧴', '洗剤 シャンプー リンス コンディショナー ボディソープ ハンドソープ 柔軟剤 漂白剤 化粧水'],
+  ['🧻', 'トイレットペーパー ティッシュ キッチンペーパー ペーパー'], ['🪥', '歯ブラシ 歯磨き'], ['🧽', 'スポンジ'],
+  ['🗑️', 'ゴミ袋 ごみ袋'], ['📦', 'ラップ アルミホイル ジップロック'], ['🔋', '電池'], ['💡', '電球'], ['💊', '薬 サプリ 目薬'],
+  ['😷', 'マスク'], ['🩹', '絆創膏'], ['💐', '花'], ['🐱', '猫 キャットフード'], ['🐶', '犬 ドッグフード'], ['👶', 'おむつ オムツ'],
+].map(([e, words]) => [e, words.split(' ').map(normName)]);
+function guessEmoji(name) {
+  const n = normName(name);
+  if (!n) return '🛒';
+  for (const [e, words] of EMOJI_DICT) if (words.some(w => n.includes(w))) return e;
+  return '🛒';
+}
+const itemIcon = t => t.icon || guessEmoji(t.title);
+
+/** 購入回数の記録（delta: +1 購入 / -1 取り消し） */
+async function recordPurchase(t, delta) {
+  const key = normName(t.title);
+  if (!key) return;
+  let h = S.history.find(x => x.name === key);
+  if (!h) { if (delta < 0) return; h = { name: key, label: t.title, icon: t.icon || '', count: 0, lastBoughtAt: 0 }; S.history.push(h); }
+  h.count = Math.max(0, h.count + delta);
+  if (delta > 0) { h.lastBoughtAt = Date.now(); h.label = t.title; if (t.icon) h.icon = t.icon; }
+  if (h.count === 0) {
+    S.history = S.history.filter(x => x !== h);
+    await persist([{ store: 'history', del: [key] }], '購入履歴の保存');
+  } else {
+    await persist([{ store: 'history', put: [h] }], '購入履歴の保存');
+  }
+}
+/** よく買う物の候補（購入回数順、いま未購入で入っている物は除く） */
+function frequentItems(listId) {
+  const inList = new Set(tasksOf(listId).filter(t => !t.done).map(t => normName(t.title)));
+  return S.history.filter(h => h.count > 0 && !inList.has(h.name))
+    .sort((a, b) => b.count - a.count || b.lastBoughtAt - a.lastBoughtAt);
+}
+
+/* =====================================================================
+   4-3. クイック追加の日本語解析
+   認識: 今日/明日/明後日/N日後/来週/(来週|今週|再来週)X曜/X曜/9/30/9月30日/2026/9/30/月末
+         15時/15時30分/15時半/15:30/午前・午後・朝・夜・夕方
+         毎日/平日/毎週(X曜)/毎月(N日)/#リスト名/×2(数量)/2個・2本など(買い物リストのみ)
+   解析結果は chips として返し、入力欄の下に表示する。
+   skip に含めた種類は「認識したが使わない」（チップをタップで切替）。
+   ===================================================================== */
+const WD_IDX = { 日: 0, 月: 1, 火: 2, 水: 3, 木: 4, 金: 5, 土: 6 };
+const SUF = '(?:までに|まで|に|の)?';
+function startOfWeek(k) { const ws = S.settings.weekStart ?? 1; return addDays(k, -((weekday(k) - ws + 7) % 7)); }
+function nextWeekday(from, wd) { return addDays(from, (wd - weekday(from) + 7) % 7); }
+function ymd(y, m, d) {
+  if (!(m >= 1 && m <= 12 && d >= 1)) return null;
+  if (d > new Date(Date.UTC(y, m, 0)).getUTCDate()) return null;
+  return `${y}-${pad(m)}-${pad(d)}`;
+}
+function monthDay(y, m, d) {   // 月の日数で丸める（毎月31日→30日の月は30日）
+  const dim = new Date(Date.UTC(y, m, 0)).getUTCDate();
+  return `${y}-${pad(m)}-${pad(Math.min(d, dim))}`;
+}
+function findListByTag(name) {
+  const n = normName(name);
+  const ls = sortedLists();
+  return ls.find(l => normName(l.name) === n)
+    || ls.find(l => normName(l.name).startsWith(n))
+    || ls.find(l => normName(l.name).includes(n));
+}
+
+function parseQuick(raw, { listId = null, skip = new Set() } = {}) {
+  let s = ' ' + String(raw).replace(/[０-９：／＃]/g, c => String.fromCharCode(c.charCodeAt(0) - 0xFEE0)) + ' ';
+  const today = dateKey();
+  const r = { title: '', listId, dueDate: null, dueTime: null, repeat: 'none', quantity: 1, chips: [] };
+  const seen = new Set();
+  let repeatWd = null, repeatDay = null;
+
+  /** 1つの規則：最初に一致した部分を認識。handler が {label, apply} を返せば採用 */
+  const rule = (kind, re, handler) => {
+    if (seen.has(kind)) return;
+    const m = s.match(re);
+    if (!m) return;
+    const res = handler(m);
+    if (!res) return;
+    seen.add(kind);
+    const off = skip.has(kind) && !res.warn;
+    r.chips.push({ kind, label: res.label, off, warn: !!res.warn });
+    if (off || res.warn) return;
+    if (res.apply) res.apply();
+    s = s.replace(m[0], (m.groups && m.groups.pre || '') + ' ');
+  };
+
+  // --- リスト指定 #名前 ---
+  rule('list', /[#＃]([^\s#＃]+)/, m => {
+    const l = findListByTag(m[1]);
+    if (!l) return { label: `#${m[1]}：該当リストなし`, warn: true };
+    return { label: `📂 ${l.icon} ${l.name}`, apply: () => { r.listId = l.id; } };
+  });
+  const target = listById(r.listId);
+
+  // --- 繰り返し ---
+  rule('repeat', new RegExp('毎週\\s?の?([日月火水木金土])曜日?' + SUF), m => ({ label: `🔁 毎週${m[1]}曜`, apply: () => { r.repeat = 'weekly'; repeatWd = WD_IDX[m[1]]; } }));
+  rule('repeat', new RegExp('毎月\\s?(\\d{1,2})日' + SUF), m => (+m[1] >= 1 && +m[1] <= 31) ? { label: `🔁 毎月${+m[1]}日`, apply: () => { r.repeat = 'monthly'; repeatDay = +m[1]; } } : null);
+  rule('repeat', new RegExp('毎?平日' + SUF), () => ({ label: '🔁 平日', apply: () => { r.repeat = 'weekdays'; } }));
+  rule('repeat', new RegExp('毎日' + SUF), () => ({ label: '🔁 毎日', apply: () => { r.repeat = 'daily'; } }));
+  rule('repeat', new RegExp('毎週' + SUF), () => ({ label: '🔁 毎週', apply: () => { r.repeat = 'weekly'; } }));
+  rule('repeat', new RegExp('毎月' + SUF), () => ({ label: '🔁 毎月', apply: () => { r.repeat = 'monthly'; } }));
+
+  // --- 日付 ---
+  const dateRes = k => k ? { label: `📅 ${relDate(k)}`, apply: () => { r.dueDate = k; } } : null;
+  const [ty, tm] = today.split('-').map(Number);
+  const futureMD = (m, d) => { let k = ymd(ty, m, d); if (k && k < today) k = ymd(ty + 1, m, d); return k; };
+  rule('date', new RegExp('(\\d{4})[/\\-年](\\d{1,2})[/\\-月](\\d{1,2})日?' + SUF), m => dateRes(ymd(+m[1], +m[2], +m[3])));
+  rule('date', new RegExp('(?<pre>^|\\D)(\\d{1,2})/(\\d{1,2})(?!\\d)' + SUF), m => dateRes(futureMD(+m[2], +m[3])));
+  rule('date', new RegExp('(\\d{1,2})月(\\d{1,2})日' + SUF), m => dateRes(futureMD(+m[1], +m[2])));
+  rule('date', new RegExp('(明後日|あさって)' + SUF), () => dateRes(addDays(today, 2)));
+  rule('date', new RegExp('(明日|あした)' + SUF), () => dateRes(addDays(today, 1)));
+  rule('date', new RegExp('(今日|きょう|本日)' + SUF), () => dateRes(today));
+  rule('date', new RegExp('(\\d{1,3})日後' + SUF), m => dateRes(addDays(today, +m[1])));
+  rule('date', new RegExp('(再来週|来週|今週)\\s?の?([日月火水木金土])曜日?' + SUF), m => {
+    const base = addDays(startOfWeek(today), { 今週: 0, 来週: 7, 再来週: 14 }[m[1]]);
+    return dateRes(addDays(base, (WD_IDX[m[2]] - (S.settings.weekStart ?? 1) + 7) % 7));
+  });
+  rule('date', new RegExp('([日月火水木金土])曜日?' + SUF), m => dateRes(nextWeekday(today, WD_IDX[m[1]])));
+  rule('date', new RegExp('(再来週|来週)' + SUF), m => dateRes(addDays(startOfWeek(today), m[1] === '来週' ? 7 : 14)));
+  rule('date', new RegExp('月末' + SUF), () => dateRes(monthDay(ty, tm, 31)));
+
+  // --- 時刻 ---
+  const timeRes = (ampm, h, mi) => {
+    h = +h; mi = +(mi || 0);
+    if (ampm && /午後|夜|夕方/.test(ampm) && h < 12) h += 12;
+    if (ampm === '午前' && h === 12) h = 0;
+    if (h > 23 || mi > 59) return null;
+    const hm = `${pad(h)}:${pad(mi)}`;
+    return { label: `⏰ ${hm}`, apply: () => { r.dueTime = hm; } };
+  };
+  rule('time', new RegExp('(午前|午後|朝|夜|夕方)?\\s?(\\d{1,2}):(\\d{2})' + SUF), m => timeRes(m[1], m[2], m[3]));
+  rule('time', new RegExp('(午前|午後|朝|夜|夕方)?\\s?(\\d{1,2})時(?!間)(半|(\\d{1,2})分)?' + SUF), m => timeRes(m[1], m[2], m[3] === '半' ? 30 : m[4]));
+
+  // --- 数量 ---
+  const qtyRes = n => (n >= 1 && n <= 999) ? { label: `✖ 数量 ${n}`, apply: () => { r.quantity = n; } } : null;
+  rule('qty', /(?<pre>^|\s)[x×✕*＊]\s?(\d{1,3})(?=\s|$)/i, m => qtyRes(+m[2]));
+  const isShop = (listById(r.listId) || target)?.type === 'shopping';
+  if (isShop) rule('qty', /(\d{1,3})\s?(個|本|パック|袋|枚|缶|玉|束|箱|つ|房|尾|切れ)(?=\s|$)/, m => qtyRes(+m[1]));
+
+  // --- 繰り返しの初回日を補う ---
+  if (r.repeat !== 'none' && !r.dueDate) {
+    if (r.repeat === 'weekly') r.dueDate = nextWeekday(today, repeatWd ?? weekday(today));
+    else if (r.repeat === 'weekdays') { let k = today; while (weekday(k) === 0 || weekday(k) === 6) k = addDays(k, 1); r.dueDate = k; }
+    else if (r.repeat === 'monthly' && repeatDay) {
+      let k = monthDay(ty, tm, repeatDay);
+      if (k < today) k = monthDay(tm === 12 ? ty + 1 : ty, tm === 12 ? 1 : tm + 1, repeatDay);
+      r.dueDate = k;
+    } else r.dueDate = today;
+    const c = r.chips.find(x => x.kind === 'repeat');
+    if (c) c.label += `（初回 ${relDate(r.dueDate)}）`;
+  }
+  if (r.dueTime && !r.dueDate) r.dueDate = today;
+
+  r.title = s.replace(/\s+/g, ' ').trim() || String(raw).trim();
+  return r;
 }
 
 /* =====================================================================
@@ -782,9 +1026,73 @@ function renderSoon(view) {
 }
 
 /* ---------- 9-2. リスト画面 ---------- */
+function listHeader(l) {
+  return `<header class="phead" style="--c:${esc(l.color)}">
+    <button class="icon-btn back-btn" data-act="back" aria-label="ホームへ戻る">${ICON.back}</button>
+    <div class="ph-title ph-list"><span class="ph-emoji" aria-hidden="true">${esc(l.icon)}</span><b>${esc(l.name)}</b></div>
+    <button class="icon-btn" data-act="list-settings" data-id="${l.id}" aria-label="リストの設定">${ICON.more}</button>
+  </header>`;
+}
+
+/* ---------- 9-2b. 買い物モード（type="shopping"） ---------- */
+function renderShopping(l) {
+  const ts = tasksOf(l.id).sort(byOrder);
+  const active = ts.filter(t => !t.done);
+  const bought = ts.filter(t => t.done).sort((a, b) => (b.doneAt || 0) - (a.doneAt || 0));
+  const freq = frequentItems(l.id);
+  const freqShown = S.freqAll ? freq : freq.slice(0, 12);
+  let html = listHeader(l) + `
+  <div class="shop-add">
+    <label style="flex:1;display:flex"><span class="sr-only">品名</span>
+      <input class="inp" type="text" id="shop-input" data-list="${l.id}" placeholder="＋ 品名を追加（例：牛乳 ×2）" enterkeyhint="done" autocomplete="off" maxlength="100"></label>
+    <button class="btn primary" data-act="shop-add" data-id="${l.id}">追加</button>
+  </div>
+  <div class="list-summary"><span>買う物 <b style="color:var(--text)">${active.length}</b> 品</span><span>タップで購入済み</span></div>`;
+
+  html += active.length
+    ? `<div class="shop-grid">${active.map(t => shopItem(t, l)).join('')}</div>`
+    : `<div class="empty"><div class="big">${ts.length ? '🎉' : '🛒'}</div><p>${ts.length ? '買う物はすべて購入済みです' : '買う物はまだありません。<br>上の欄か「よく買う物」から追加できます。'}</p></div>`;
+
+  if (freq.length) {
+    html += `<div class="sec-head"><span>よく買う物</span>
+      <button class="txt-btn" data-act="freq-edit" aria-pressed="${!!S.freqEdit}">${S.freqEdit ? '完了' : '編集'}</button></div>
+      <div class="freq ${S.freqEdit ? 'editing' : ''}">${freqShown.map(h => `
+        <button class="freq-chip" data-act="${S.freqEdit ? 'freq-del' : 'freq-add'}" data-key="${esc(h.name)}" data-id="${l.id}"
+          aria-label="${esc(h.label)}（${h.count}回）${S.freqEdit ? 'を候補から削除' : 'を追加'}">
+          <span class="fe">${esc(h.icon || guessEmoji(h.label))}</span><span class="fn">${esc(h.label)}</span><span class="fc">${S.freqEdit ? '✕' : h.count + '回'}</span></button>`).join('')}
+      </div>
+      ${freq.length > 12 ? `<div style="text-align:center"><button class="link-btn" data-act="freq-all">${S.freqAll ? '閉じる' : `ほか ${freq.length - 12}件を表示`}</button></div>` : ''}`;
+  }
+  if (bought.length) {
+    html += `<div class="sec-head"><span>購入済み ${bought.length}品</span>
+      <button class="txt-btn" data-act="clear-done" data-id="${l.id}">購入済みをすべてクリア</button></div>
+      <div class="bought-list">${bought.map(t => `<button class="bought-chip" data-act="toggle" data-id="${t.id}" aria-label="${esc(t.title)} を未購入に戻す">
+        <span>${esc(itemIcon(t))}</span><s>${esc(t.title)}</s>${t.quantity > 1 ? `<small>×${t.quantity}</small>` : ''}</button>`).join('')}</div>`;
+  }
+  return html;
+}
+function shopItem(t, l) {
+  const q = t.quantity || 1;
+  const due = dueInfo(t);
+  return `<div class="shop-item" data-id="${t.id}" style="--c:${esc(l.color)}">
+    <button class="shop-main" data-act="buy" data-id="${t.id}" aria-label="${esc(t.title)}${q > 1 ? ` ${q}個` : ''} を購入済みにする">
+      <span class="shop-emoji" aria-hidden="true">${esc(itemIcon(t))}</span>
+      <span class="shop-name">${t.priority ? `<span class="prio-dot p${t.priority}"></span>` : ''}${esc(t.title)}</span>
+      ${due || t.note ? `<span class="shop-meta">${due ? `<span class="due ${due.overdue ? 'overdue' : due.today ? 'today' : ''}">${esc(due.label)}</span>` : ''}${t.note ? ' 📝' : ''}</span>` : ''}
+    </button>
+    <button class="shop-edit" data-act="edit-task" data-id="${t.id}" aria-label="${esc(t.title)} を編集">✎</button>
+    <div class="shop-qty">
+      <button data-act="qty" data-d="-1" data-id="${t.id}" aria-label="数量を減らす" ${q <= 1 ? 'disabled' : ''}>−</button>
+      <span aria-label="数量 ${q}">×${q}</span>
+      <button data-act="qty" data-d="1" data-id="${t.id}" aria-label="数量を増やす">＋</button>
+    </div>
+  </div>`;
+}
+
 function renderList(id) {
   const l = listById(id);
   if (!l) return renderPickHint();
+  if (l.type === 'shopping') return renderShopping(l);
   const ts = tasksOf(id).sort(byOrder);
   const st = todayStats(ts);
   const style = l.completeStyle;
@@ -792,12 +1100,7 @@ function renderList(id) {
   const done = ts.filter(t => t.done).sort((a, b) => (b.doneAt || 0) - (a.doneAt || 0));
   const remain = ts.length - done.length;
 
-  let html = `
-  <header class="phead" style="--c:${esc(l.color)}">
-    <button class="icon-btn back-btn" data-act="back" aria-label="ホームへ戻る">${ICON.back}</button>
-    <div class="ph-title ph-list"><span class="ph-emoji" aria-hidden="true">${esc(l.icon)}</span><b>${esc(l.name)}</b></div>
-    <button class="icon-btn" data-act="list-settings" data-id="${l.id}" aria-label="リストの設定">${ICON.more}</button>
-  </header>
+  let html = listHeader(l) + `
   <div class="list-summary">
     <span>残り <b style="color:var(--text)">${remain}</b> 件</span>
     ${st.total ? `<span>今日 ${st.done}/${st.total} 完了（${Math.round(st.pct * 100)}%）</span>` : ''}
@@ -839,6 +1142,7 @@ function taskRow(t, l, sortable, showDoneDate = false) {
   const meta = [];
   if (showDoneDate && t.doneAt) meta.push(`<span>✓ ${fmtMD(dateKey(t.doneAt))}</span>`);
   if (due) meta.push(`<span class="due ${due.overdue ? 'overdue' : due.today ? 'today' : ''}">${due.overdue ? '⚠ ' : '📅 '}${esc(due.label)}</span>`);
+  if (repeatLabel(t)) meta.push(`<span title="繰り返し">🔁 ${esc(repeatLabel(t))}</span>`);
   if (t.note) meta.push('<span title="メモあり">📝 メモ</span>');
   if (subs.length) meta.push(`<button class="sub-toggle" data-act="sub-expand" data-id="${t.id}" aria-expanded="${open}">☑ ${subDone}/${subs.length} ${open ? '▾' : '▸'}</button>`);
   const prio = t.priority ? `<span class="prio-dot p${t.priority}" title="優先度：${PRIO_LABEL[t.priority]}"></span><span class="sr-only">優先度${PRIO_LABEL[t.priority]}</span>` : '';
@@ -898,8 +1202,12 @@ async function toggleDone(id) {
   // 先に見た目だけ変えてアニメーションさせ、少し後に描き直す
   const rows = $$(`.task[data-id="${id}"]`);
   rows.forEach(r => { r.classList.toggle('done', t.done); const c = r.querySelector('.chk'); if (c) c.setAttribute('aria-checked', t.done); });
+  const shop = l.type === 'shopping';
   let delay = 0;
-  if (t.done && l.completeStyle === 'vanish') {
+  if (shop) {
+    // 買い物：アイコンが縮んで消える
+    if (t.done) { delay = reduceMotion.matches ? 0 : 420; $$(`.shop-item[data-id="${id}"]`).forEach(r => r.classList.add('bought')); }
+  } else if (t.done && l.completeStyle === 'vanish') {
     delay = reduceMotion.matches ? 0 : 620;
     rows.forEach(r => { r.classList.add('vanishing'); setTimeout(() => collapse(r), 260); });
   } else if (l.completeStyle === 'strike') {
@@ -907,10 +1215,12 @@ async function toggleDone(id) {
   }
   scheduleRender(delay);
   await saveTasks(t, t.done ? '完了の保存' : '未完了への変更');
+  if (shop) await recordPurchase(t, t.done ? 1 : -1);
 
   if (t.done) {
-    showUndo(`「${t.title}」を完了しました`, async () => {
+    showUndo(shop ? `「${t.title}」を購入済みにしました` : `「${t.title}」を完了しました`, async () => {
       Object.assign(t, before); render(); await saveTasks(t, '元に戻す');
+      if (shop) await recordPurchase(t, -1);
     });
     if (!wasAll && allDoneToday()) setTimeout(celebrate, delay + 60);
   }
@@ -919,7 +1229,10 @@ async function toggleDone(id) {
 async function deleteTask(id, { animate = true } = {}) {
   const t = taskById(id); if (!t) return;
   S.tasks = S.tasks.filter(x => x !== t);
-  if (animate) $$(`.task[data-id="${id}"]`).forEach(r => collapse(r));
+  if (animate) {
+    $$(`.task[data-id="${id}"]`).forEach(r => collapse(r));
+    $$(`.shop-item[data-id="${id}"]`).forEach(r => r.classList.add('bought'));
+  }
   scheduleRender(animate && !reduceMotion.matches ? 340 : 0);
   showUndo(`「${t.title}」を削除しました`, async () => {
     S.tasks.push(t); render(); await saveTasks(t, '削除の取り消し');
@@ -932,10 +1245,61 @@ async function clearDone(listId) {
   if (!done.length) return;
   S.tasks = S.tasks.filter(t => !done.includes(t));
   render();
-  showUndo(`完了済み ${done.length}件を削除しました`, async () => {
+  const shop = listById(listId)?.type === 'shopping';
+  showUndo(shop ? `購入済み ${done.length}品をクリアしました` : `完了済み ${done.length}件を削除しました`, async () => {
     S.tasks.push(...done); render(); await saveTasks(done, '削除の取り消し');
   });
   await persist([{ store: 'tasks', del: done.map(t => t.id) }], '完了済みの削除');
+}
+
+/* ---------- 買い物：追加・数量・よく買う物 ---------- */
+/** 同じ品名が未購入で残っていれば数量を足す。戻り値 {task, merged} */
+function addShoppingItem(listId, title, { quantity = 1, ...extra } = {}) {
+  const key = normName(title);
+  const same = tasksOf(listId).find(t => !t.done && normName(t.title) === key);
+  if (same) { same.quantity = Math.min(999, (same.quantity || 1) + quantity); return { task: same, merged: true }; }
+  const h = S.history.find(x => x.name === key);
+  const t = newTask(listId, title, { quantity, ...extra });
+  if (h && h.icon && !t.icon) t.icon = h.icon;
+  S.tasks.push(t);
+  return { task: t, merged: false };
+}
+async function changeQty(id, d) {
+  const t = taskById(id); if (!t) return;
+  const q = Math.max(1, Math.min(999, (t.quantity || 1) + d));
+  if (q === t.quantity) return;
+  t.quantity = q; render(); await saveTasks(t, '数量の保存');
+}
+async function shopAddFromInput(listId) {
+  const input = $('#shop-input');
+  if (!input) return;
+  const raw = input.value.trim();
+  if (!raw) { input.focus(); return; }
+  const p = parseQuick(raw, { listId });
+  const target = listById(p.listId) || listById(listId);
+  let res;
+  if (target.type === 'shopping') res = addShoppingItem(target.id, p.title, { quantity: p.quantity, dueDate: p.dueDate, dueTime: p.dueTime, repeat: p.repeat });
+  else { const t = newTask(target.id, p.title, { dueDate: p.dueDate, dueTime: p.dueTime, repeat: p.repeat }); S.tasks.push(t); res = { task: t }; }
+  render();
+  const again = $('#shop-input'); if (again) again.focus();   // 続けて入力できるように
+  showToast(res.merged ? `「${res.task.title}」の数量を ×${res.task.quantity} にしました` : `「${res.task.title}」を${target.id === listId ? '' : ` ${target.icon}${target.name} に`}追加しました`);
+  await saveTasks(res.task, '品目の追加');
+}
+async function freqAdd(listId, key) {
+  const h = S.history.find(x => x.name === key); if (!h) return;
+  const { task } = addShoppingItem(listId, h.label, h.icon ? { icon: h.icon } : {});
+  render();
+  showToast(`${h.icon || guessEmoji(h.label)} ${h.label} を追加しました`);
+  await saveTasks(task, '品目の追加');
+}
+async function freqDelete(key) {
+  const h = S.history.find(x => x.name === key); if (!h) return;
+  S.history = S.history.filter(x => x !== h);
+  render();
+  showUndo(`「${h.label}」を候補から外しました`, async () => {
+    S.history.push(h); render(); await persist([{ store: 'history', put: [h] }], '候補の復元');
+  });
+  await persist([{ store: 'history', del: [key] }], '候補の削除');
 }
 
 async function toggleSub(taskId, subId) {
@@ -1086,8 +1450,10 @@ function openTaskEditor(id) {
   const d = clone(t);
   d.subtasks = d.subtasks || [];
   const listOpts = sortedLists().map(l => `<option value="${l.id}" ${l.id === d.listId ? 'selected' : ''}>${esc(l.icon)} ${esc(l.name)}</option>`).join('');
+  const isShopTask = listById(d.listId)?.type === 'shopping';
+  d.quantity = d.quantity || 1;
   openSheet({
-    title: 'タスクを編集',
+    title: isShopTask ? '品目を編集' : 'タスクを編集',
     body: `
       <label class="field"><span>タイトル</span><input class="inp" type="text" id="te-title" value="${esc(d.title)}" maxlength="300" autocomplete="off"></label>
       <label class="field"><span>メモ</span><textarea class="inp" id="te-note" rows="3">${esc(d.note)}</textarea></label>
@@ -1102,6 +1468,14 @@ function openTaskEditor(id) {
           <button type="button" class="link-btn" data-due="7">1週間後</button><button type="button" class="link-btn" data-due="clear" style="color:var(--muted)">期限なし</button>
         </div>
       </div>
+      <label class="field"><span>繰り返し</span><select class="inp" id="te-repeat">${Object.entries(REPEAT_LABEL).map(([k, v]) =>
+        `<option value="${k}" ${(d.repeat || 'none') === k ? 'selected' : ''}>${v}${k === 'weekly' ? '（期限日の曜日）' : k === 'monthly' ? '（期限日の日付）' : ''}</option>`).join('')}</select></label>
+      ${isShopTask ? `<div class="field"><span class="field-label">数量・アイコン</span>
+        <div style="display:flex;gap:10px;align-items:center">
+          <div class="shop-qty big-qty"><button type="button" id="te-qm" aria-label="数量を減らす">−</button><span id="te-qty">×${d.quantity || 1}</span><button type="button" id="te-qp" aria-label="数量を増やす">＋</button></div>
+          <input class="inp" type="text" id="te-icon" value="${esc(d.icon || '')}" placeholder="${esc(guessEmoji(d.title))}" style="width:80px;text-align:center;font-size:22px" aria-label="アイコンの絵文字（空欄で自動）">
+          <span class="seg-note" style="margin:0">空欄なら品名から自動</span>
+        </div></div>` : ''}
       <div class="field"><span class="field-label">優先度</span><div class="seg" id="te-prio">${[0, 1, 2, 3].map(p =>
         `<button type="button" data-p="${p}" aria-pressed="${d.priority === p}">${p ? `<span class="prio-dot p${p}"></span>` : ''}${PRIO_LABEL[p]}</button>`).join('')}</div></div>
       <div class="field"><span class="field-label">サブタスク</span>
@@ -1144,6 +1518,12 @@ function openTaskEditor(id) {
         if (v === 'clear') { $('#te-date', el).value = ''; $('#te-time', el).value = ''; }
         else $('#te-date', el).value = addDays(dateKey(), +v);
       }));
+      if (isShopTask) {
+        const setQ = q => { d.quantity = Math.max(1, Math.min(999, q)); $('#te-qty', el).textContent = '×' + d.quantity; };
+        $('#te-qm', el).addEventListener('click', () => setQ(d.quantity - 1));
+        $('#te-qp', el).addEventListener('click', () => setQ(d.quantity + 1));
+        $('#te-title', el).addEventListener('input', e => { $('#te-icon', el).placeholder = guessEmoji(e.target.value); });
+      }
       $('#te-del', el).addEventListener('click', () => { closeSheet(true); deleteTask(t.id); });
       $('#te-save', el).addEventListener('click', async () => {
         const title = $('#te-title', el).value.trim();
@@ -1151,12 +1531,14 @@ function openTaskEditor(id) {
         const listId = $('#te-list', el).value;
         let dueDate = $('#te-date', el).value || null;
         const dueTime = $('#te-time', el).value || null;
-        if (dueTime && !dueDate) dueDate = dateKey();   // 時刻だけ入れたら今日扱い
+        const repeat = $('#te-repeat', el).value;
+        if ((dueTime || repeat !== 'none') && !dueDate) dueDate = dateKey();   // 時刻・繰り返しだけ入れたら今日から
         if (listId !== t.listId) t.order = nextOrder(listId);
         Object.assign(t, {
-          title, note: $('#te-note', el).value, listId, dueDate, dueTime, priority: d.priority,
+          title, note: $('#te-note', el).value, listId, dueDate, dueTime, priority: d.priority, repeat,
           subtasks: d.subtasks.filter(s => s.title.trim()).map(s => ({ ...s, title: s.title.trim() })),
         });
+        if (isShopTask) { t.quantity = d.quantity; t.icon = firstGrapheme($('#te-icon', el).value); }
         closeSheet(); render();
         await saveTasks(t);
       });
@@ -1182,7 +1564,7 @@ function openListEditor(id) {
       <div class="field"><span class="field-label">色</span><div class="swatches" id="le-colors">${COLORS.map(c =>
         `<button type="button" data-c="${c}" style="background:${c}" aria-pressed="${c === d.color}" aria-label="色 ${c}"></button>`).join('')}</div></div>
       <div class="field"><span class="field-label">種類</span><div class="seg" id="le-type">${segBtns('t', d.type, [['todo', '✅ TODO'], ['shopping', '🛒 買い物']])}</div>
-        <p class="seg-note">買い物モード（品目タイル表示・よく買う物）はフェーズ2で追加します。</p></div>
+        <p class="seg-note">買い物：品目をアイコンタイルで表示し、タップで購入済み。「よく買う物」から再追加できます（完了スタイルの設定は使いません）。</p></div>
       <div class="field"><span class="field-label">完了したタスクの表示</span><div class="seg" id="le-style">${segBtns('s', d.completeStyle, Object.entries(STYLE_INFO).map(([k, v]) => [k, v.label]))}</div>
         <p class="seg-note" id="le-style-desc">${esc(STYLE_INFO[d.completeStyle].desc)}</p></div>`,
     foot: `${isNew ? '' : '<button class="btn danger" id="le-del">削除</button>'}<span class="sp"></span><button class="btn" data-close>キャンセル</button><button class="btn primary" id="le-save">${isNew ? '追加' : '保存'}</button>`,
@@ -1225,41 +1607,71 @@ function openListEditor(id) {
   });
 }
 
-/** クイック追加（フェーズ1：タイトル＋リスト選択。日本語解析はフェーズ2で追加） */
+/** クイック追加：1行入力＋日本語解析。認識した部分はチップで表示（タップで無効化） */
 function openQuickAdd() {
   const lists = sortedLists();
   if (!lists.length) { showToast('先にリストを作成してください'); openListEditor(); return; }
   let listId = (S.route.view === 'list' && listById(S.route.listId)?.id) || listById(S.settings.lastListId)?.id || lists[0].id;
+  let skip = new Set();
+  let parsed = null;
   openSheet({
-    title: 'タスクを追加',
+    title: '追加',
     body: `
       <div class="qa-row"><label style="flex:1;display:flex"><span class="sr-only">タスク名</span>
-        <input class="inp" type="text" id="qa-input" placeholder="何をする？" enterkeyhint="send" autocomplete="off" maxlength="300"></label>
+        <input class="inp" type="text" id="qa-input" placeholder="何をする？（例：明日15時 歯医者）" enterkeyhint="send" autocomplete="off" maxlength="300"></label>
         <button class="btn primary" id="qa-add">追加</button></div>
+      <div class="qa-parse" id="qa-parse" aria-live="polite"></div>
       <div class="list-chips" id="qa-lists" role="radiogroup" aria-label="追加先のリスト">${lists.map(l =>
         `<button type="button" role="radio" data-l="${l.id}" style="--c:${esc(l.color)}" aria-pressed="${l.id === listId}" aria-checked="${l.id === listId}">${esc(l.icon)} ${esc(l.name)}</button>`).join('')}</div>
       <div class="qa-fb" id="qa-fb" aria-live="polite"></div>`,
     onMount(el) {
       const input = $('#qa-input', el);
       input.focus();
+      const update = () => {
+        const v = input.value.trim();
+        if (!v) skip = new Set();
+        parsed = v ? parseQuick(v, { listId, skip }) : null;
+        const box = $('#qa-parse', el);
+        if (!parsed) {
+          box.innerHTML = `<p class="qa-hint">「今日」「明日」「来週月曜」「9/30」「15時」「15:30」「毎週金曜」「毎日」「#買い物」「×2」を読み取ります</p>`;
+        } else {
+          box.innerHTML = `<div class="qa-title">📝 <b>${esc(parsed.title)}</b></div>
+            ${parsed.chips.length ? `<div class="pchips">${parsed.chips.map(c =>
+              `<button type="button" class="pchip ${c.off ? 'off' : ''} ${c.warn ? 'warn' : ''}" data-k="${c.kind}" ${c.warn ? 'disabled' : ''}
+                aria-pressed="${!c.off}" aria-label="${esc(c.label)}${c.warn ? '' : c.off ? '（無効。タップで有効）' : '（タップで無効）'}">${esc(c.label)}</button>`).join('')}</div>` : ''}`;
+        }
+        const eff = parsed ? parsed.listId : listId;
+        $$('#qa-lists button', el).forEach(x => { const on = x.dataset.l === eff; x.setAttribute('aria-pressed', on); x.setAttribute('aria-checked', on); });
+      };
+      update();
       const sel = el.querySelector(`[data-l="${listId}"]`); if (sel) sel.scrollIntoView({ inline: 'center', block: 'nearest' });
+      input.addEventListener('input', update);
+      $('#qa-parse', el).addEventListener('click', e => {
+        const b = e.target.closest('.pchip[data-k]'); if (!b) return;
+        const k = b.dataset.k;
+        if (skip.has(k)) skip.delete(k); else skip.add(k);
+        update(); input.focus();
+      });
       $('#qa-lists', el).addEventListener('click', e => {
         const b = e.target.closest('[data-l]'); if (!b) return;
         listId = b.dataset.l;
-        $$('#qa-lists button', el).forEach(x => { x.setAttribute('aria-pressed', x === b); x.setAttribute('aria-checked', x === b); });
-        input.focus();
+        update(); input.focus();
       });
       const add = async () => {
-        const title = input.value.trim();
-        if (!title) { input.focus(); return; }
-        const t = newTask(listId, title);
-        S.tasks.push(t);
+        if (!input.value.trim()) { input.focus(); return; }
+        const p = parseQuick(input.value.trim(), { listId, skip });
+        const l = listById(p.listId) || listById(listId);
+        let task, merged = false;
+        if (l.type === 'shopping') ({ task, merged } = addShoppingItem(l.id, p.title, { quantity: p.quantity, dueDate: p.dueDate, dueTime: p.dueTime, repeat: p.repeat }));
+        else { task = newTask(l.id, p.title, { dueDate: p.dueDate, dueTime: p.dueTime, repeat: p.repeat }); S.tasks.push(task); }
         S.settings.lastListId = listId;
-        input.value = ''; input.focus();
-        const l = listById(listId);
-        $('#qa-fb', el).textContent = `✓ ${l.icon} ${l.name} に「${title}」を追加しました`;
+        input.value = ''; skip = new Set(); update(); input.focus();
+        const extra = p.chips.filter(c => !c.off && !c.warn && c.kind !== 'list').map(c => c.label.replace(/（初回.*）/, '')).join(' ');
+        $('#qa-fb', el).textContent = merged
+          ? `✓ ${l.icon} ${l.name} の「${task.title}」を ×${task.quantity} にしました`
+          : `✓ ${l.icon} ${l.name} に「${task.title}」を追加しました ${extra}`;
         render();
-        await persist([{ store: 'tasks', put: [t] }, { store: 'kv', put: [S.settings] }], 'タスクの追加');
+        await persist([{ store: 'tasks', put: [task] }, { store: 'kv', put: [S.settings] }], 'タスクの追加');
       };
       $('#qa-add', el).addEventListener('click', add);
       input.addEventListener('keydown', e => { if (e.key === 'Enter' && !isComposingEnter(e)) { e.preventDefault(); add(); } });
@@ -1458,6 +1870,13 @@ document.addEventListener('click', e => {
     case 'sub-toggle': toggleSub(id, a.dataset.sid); break;
     case 'history': if (S.historyOpen.has(id)) S.historyOpen.delete(id); else S.historyOpen.add(id); render(); break;
     case 'clear-done': clearDone(id); break;
+    case 'buy': toggleDone(id); break;
+    case 'qty': changeQty(id, +a.dataset.d); break;
+    case 'shop-add': shopAddFromInput(id); break;
+    case 'freq-add': freqAdd(id, a.dataset.key); break;
+    case 'freq-del': freqDelete(a.dataset.key); break;
+    case 'freq-edit': S.freqEdit = !S.freqEdit; render(); break;
+    case 'freq-all': S.freqAll = !S.freqAll; render(); break;
     case 'set': {
       const k = a.dataset.k; let v = a.dataset.v;
       if (k === 'weekStart') v = +v;
@@ -1471,15 +1890,16 @@ document.addEventListener('click', e => {
 
 // PC：右クリックメニュー（Android の長押しでも開く）
 document.addEventListener('contextmenu', e => {
-  const row = e.target.closest('.task[data-id]');
+  const row = e.target.closest('.task[data-id], .shop-item[data-id], .bought-chip[data-id]');
   const tile = e.target.closest('.tile[data-id]');
   if (!row && !tile) return;
   e.preventDefault();
   if (row) {
     const t = taskById(row.dataset.id); if (!t) return;
+    const shop = listById(t.listId)?.type === 'shopping';
     openMenu(e.clientX, e.clientY, [
       { label: '✏️ 編集', fn: () => openTaskEditor(t.id) },
-      { label: t.done ? '↩️ 未完了に戻す' : '✅ 完了にする', fn: () => toggleDone(t.id) },
+      { label: t.done ? (shop ? '↩️ 未購入に戻す' : '↩️ 未完了に戻す') : (shop ? '✅ 購入済みにする' : '✅ 完了にする'), fn: () => toggleDone(t.id) },
       { prio: t.priority, onPrio: p => setPriority(t.id, p) },
       { label: '⤒ 一番上へ', fn: () => moveToTop(t.id) },
       '-',
@@ -1497,6 +1917,10 @@ document.addEventListener('contextmenu', e => {
 });
 
 document.addEventListener('keydown', e => {
+  // 買い物リスト上部の入力欄（日本語変換中の Enter は無視）
+  if (e.target.id === 'shop-input' && e.key === 'Enter' && !isComposingEnter(e)) {
+    e.preventDefault(); shopAddFromInput(e.target.dataset.list); return;
+  }
   if (e.key === 'Escape') {
     if (dialogResolve) { dialogResolve(false); return; }
     if (!$('#menu').hidden) { closeMenu(); return; }
