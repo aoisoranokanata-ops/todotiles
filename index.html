@@ -6,6 +6,11 @@
 <meta name="theme-color" content="#f3f4f7">
 <meta name="format-detection" content="telephone=no">
 <title>ToDoTiles</title>
+<link rel="manifest" href="manifest.json">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-title" content="ToDoTiles">
+<meta name="apple-mobile-web-app-status-bar-style" content="default">
 <style>
 /* =====================================================================
    1. デザイントークン（ライト / ダーク）
@@ -402,6 +407,60 @@ body[data-view="calendar"] #main { max-width: 1280px; }
 @keyframes ring { 20%, 60% { transform: rotate(-15deg); } 40%, 80% { transform: rotate(15deg); } }
 
 /* =====================================================================
+   6-4. 統計・データ管理・更新のお知らせ
+   ===================================================================== */
+.stats { padding: 0 16px; max-width: 800px; }
+.stat-tiles { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; margin-bottom: 16px; }
+.stat-tile { background: var(--surface); border-radius: 18px; box-shadow: var(--shadow); padding: 12px 10px; display: flex; flex-direction: column; align-items: center; }
+.stat-tile span { font-size: 12.5px; color: var(--muted); font-weight: 700; }
+.stat-tile b { font-size: 30px; line-height: 1.2; font-variant-numeric: tabular-nums; }
+.stat-tile small { font-size: 11.5px; color: var(--muted); }
+.card-head { display: flex; align-items: center; justify-content: space-between; gap: 8px; padding-top: 10px; }
+.card-head h3 { margin: 0; font-size: 14px; color: var(--text); }
+.small-seg { width: 132px; }
+.ch-tip { margin: 8px 0 0; font-size: 13px; color: var(--muted); min-height: 20px; }
+.chart-wrap { overflow: hidden; padding-bottom: 6px; }
+.chart { display: block; max-width: 100%; }
+.ch-bar { fill: var(--accent); transition: opacity .15s; }
+.ch-bar.dim { opacity: .35; }
+.ch-hit { fill: transparent; cursor: pointer; }
+.ch-grid { stroke: var(--line); stroke-dasharray: 3 4; }
+.ch-base { stroke: var(--muted); stroke-opacity: .5; }
+.ch-axis { fill: var(--muted); font-size: 11px; font-variant-numeric: tabular-nums; }
+.ch-axis.today { fill: var(--text); font-weight: 700; }
+.ch-val { fill: var(--text); font-size: 12px; font-weight: 700; }
+.streak { display: flex; align-items: baseline; flex-wrap: wrap; gap: 6px; margin: 10px 0 12px; }
+.streak .fire { font-size: 26px; }
+.streak b { font-size: 36px; line-height: 1; }
+.streak small { flex-basis: 100%; color: var(--muted); font-size: 12.5px; }
+.streak-days { display: grid; grid-template-columns: repeat(14, minmax(0, 1fr)); gap: 3px; }
+.sd { display: flex; flex-direction: column; align-items: center; gap: 2px; }
+.sd i { width: 100%; max-width: 26px; aspect-ratio: 1; border-radius: 7px; display: grid; place-items: center; font-style: normal; font-size: 12px; font-weight: 800; background: var(--surface2); color: var(--muted); }
+.sd.ok i { background: var(--ok); color: #fff; }
+.sd.miss i { background: color-mix(in srgb, var(--danger) 16%, transparent); color: var(--danger); }
+.sd.open i { box-shadow: inset 0 0 0 2px var(--accent); color: var(--accent); background: none; }
+.sd small { font-size: 10px; color: var(--muted); }
+.lbars { display: flex; flex-direction: column; gap: 8px; padding: 10px 0 14px; }
+.lbar { display: grid; grid-template-columns: minmax(84px, 30%) 1fr auto; align-items: center; gap: 10px; font-size: 14px; }
+.lb-name { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.lb-track { height: 12px; background: var(--surface2); border-radius: 4px; overflow: hidden; }
+.lb-track i { display: block; height: 100%; background: var(--c); border-radius: 0 4px 4px 0; }
+.lbar b { font-variant-numeric: tabular-nums; min-width: 24px; text-align: right; }
+.btn-row { display: flex; gap: 8px; flex-wrap: wrap; margin-top: 10px; }
+.check-row { display: flex; align-items: center; gap: 10px; min-height: 44px; font-size: 14px; margin-top: 4px; }
+.check-row input { width: 22px; height: 22px; accent-color: var(--accent); }
+.nudge { display: flex; align-items: center; flex-wrap: wrap; gap: 0 4px; margin: -8px 16px 14px; padding: 2px 6px 2px 14px; border-radius: 14px; background: var(--surface2); font-size: 13.5px; color: var(--muted); }
+.nudge span { flex: 1; min-width: 180px; }
+.link-btn.muted { color: var(--muted); }
+#updbar {
+  position: fixed; left: 12px; right: 12px; bottom: calc(var(--nav-h) + env(safe-area-inset-bottom) + 72px); z-index: 61; max-width: 520px; margin: 0 auto;
+  display: flex; align-items: center; gap: 6px; padding: 4px 6px 4px 16px; min-height: 52px; border-radius: 14px;
+  background: var(--accent); color: #fff; box-shadow: var(--shadow-lg); font-weight: 700; font-size: 14px;
+}
+#updbar span { flex: 1; }
+#updbar button { min-height: 44px; min-width: 44px; padding: 0 12px; border: 0; border-radius: 10px; background: rgba(255,255,255,.2); color: #fff; font-weight: 800; }
+
+/* =====================================================================
    6-2. 買い物モード
    ===================================================================== */
 .shop-add { display: flex; gap: 8px; padding: 0 12px 12px; }
@@ -523,6 +582,7 @@ body.sheet-open #toast { bottom: calc(var(--kb) + env(safe-area-inset-bottom) + 
 <div id="errbar" role="alert" hidden></div>
 <div id="celebrate" aria-hidden="true"></div>
 <div id="alarms" aria-live="assertive"></div>
+<div id="updbar" role="status" hidden></div>
 
 <script>
 'use strict';
@@ -530,7 +590,7 @@ body.sheet-open #toast { bottom: calc(var(--kb) + env(safe-area-inset-bottom) + 
    ToDoTiles — フェーズ1
    データ層(IndexedDB) / ホームのタイル / リスト画面 / 完了スタイル3種 / 元に戻す
    ===================================================================== */
-const APP_VERSION = '0.3.0';
+const APP_VERSION = '0.4.0';
 const DB_NAME = 'todotiles';
 const DB_VER = 1;
 const LS_THEME = 'todotiles.theme';   // 起動時のちらつき防止用（本体の設定は IndexedDB）
@@ -673,6 +733,9 @@ const S = {
   historyOpen: new Set(),    // 完了履歴を開いているリストID
   persisted: null,           // navigator.storage.persist() の結果
   calAnchor: null,           // カレンダーで表示中の基準日（起動時に今日）
+  archive: {},               // 削除済みタスクの完了数 {日付: {listId: 件数}}（統計用）
+  meta: null,                // 初回起動日時など
+  statRange: 7,              // 統計グラフの期間（7 / 30）
   ready: false,
 };
 
@@ -1046,7 +1109,9 @@ async function loadAll() {
   fixed.forEach(t => normalizeRepeat(t));
   if (fixed.length) await DB.write([{ store: 'tasks', put: fixed }]);
   S.tasks.forEach(t => { if (!t.doneDates) t.doneDates = []; });
+  S.archive = (kv.find(r => r.key === 'archive') || {}).days || {};
   const meta = kv.find(r => r.key === 'meta');
+  S.meta = meta || { key: 'meta', initializedAt: Date.now(), version: APP_VERSION };
   if (!meta) {
     // 初回起動：初期リストを作成（一度作ったら、全部消されても再作成しない）
     if (!S.lists.length) {
@@ -1157,6 +1222,7 @@ function render(scrollTop = false) {
       : r.view === 'list' ? renderList(r.listId)
       : r.view === 'settings' ? renderSettings()
       : r.view === 'calendar' ? renderCalendar()
+      : r.view === 'stats' ? renderStats()
       : renderSoon(r.view);
     B.innerHTML = '';
   }
@@ -1196,6 +1262,7 @@ function renderHome() {
     </div>
   </section>
   ${S.homeEdit ? '' : renderAgenda()}
+  ${S.homeEdit ? '' : renderBackupNudge()}
   ${S.homeEdit ? '<p class="hint">左上の ⠿ をドラッグして並べ替え／タイルをタップして編集</p>' : ''}
   <div class="tiles ${S.homeEdit ? 'editing' : ''}" data-sort="lists">
     ${sortedLists().map(l => tileHTML(l, sel)).join('')}
@@ -1543,6 +1610,133 @@ function renderAgenda() {
   </section>`;
 }
 
+/* ---------- 9-6. 統計 ---------- */
+/** タスクが完了した日（通常＝完了時刻の日付、繰り返し＝完了した回の日付） */
+function completionDates(t) {
+  return [...(t.doneDates || []), ...(t.done && t.doneAt ? [dateKey(t.doneAt)] : [])];
+}
+/** 削除するタスクの完了数を統計用に残す（sign=+1 退避 / -1 取り消し） */
+async function archiveTasks(tasks, sign) {
+  let changed = false;
+  for (const t of tasks) for (const d of completionDates(t)) {
+    const o = S.archive[d] || (S.archive[d] = {});
+    o[t.listId] = (o[t.listId] || 0) + sign;
+    if (o[t.listId] <= 0) delete o[t.listId];
+    if (!Object.keys(o).length) delete S.archive[d];
+    changed = true;
+  }
+  if (changed) await persist([{ store: 'kv', put: [{ key: 'archive', days: S.archive }] }], '統計の保存');
+}
+/** 日付ごと・リストごとの完了数 {日付: {listId: n}} */
+function completionCounts() {
+  const days = {};
+  const add = (d, l, n) => { const o = days[d] || (days[d] = {}); o[l] = (o[l] || 0) + n; };
+  for (const t of S.tasks) for (const d of completionDates(t)) add(d, t.listId, 1);
+  for (const [d, o] of Object.entries(S.archive)) for (const [l, n] of Object.entries(o)) add(d, l, n);
+  return days;
+}
+const sumDay = o => Object.values(o || {}).reduce((a, b) => a + b, 0);
+
+/** その日の「予定」（期限日のあるタスクと繰り返しの回）を全部完了したか */
+function dayPlan(k) {
+  let total = 0, done = 0;
+  for (const t of liveTasks()) {
+    if (isRepeat(t)) { if (occursOn(t, k)) { total++; if (t.doneDates.includes(k)) done++; } }
+    else if (t.dueDate === k) { total++; if (t.done) done++; }
+  }
+  return { total, done };
+}
+/** 連続達成日数。予定のない日は数えずに飛ばす（途切れない）。今日が未達でもまだ途切れない */
+function streaks() {
+  const today = dateKey();
+  let run = 0, best = 0;
+  const recent = [];
+  for (let i = 365; i >= 0; i--) {
+    const k = addDays(today, -i);
+    const p = dayPlan(k);
+    const state = !p.total ? 'none' : p.done === p.total ? 'ok' : k === today ? 'open' : 'miss';
+    if (i < 14) recent.push({ k, state, ...p });
+    if (state === 'ok') { run++; best = Math.max(best, run); }
+    else if (state === 'miss') run = 0;
+  }
+  return { cur: run, best, recent };
+}
+
+function barChartSVG(data, W) {
+  const H = 180, padL = 28, padR = 6, padT = 20, padB = 24;
+  const n = data.length, max = Math.max(1, ...data.map(d => d.n));
+  const ch = H - padT - padB, cw = (W - padL - padR) / n;
+  const bw = Math.max(3, Math.min(30, cw - 2));   // 隣の棒との間に最低2pxのすき間
+  const y0 = H - padB;
+  const maxI = data.findIndex(d => d.n === max && max > 0);
+  let g = `<line class="ch-grid" x1="${padL}" x2="${W - padR}" y1="${padT}" y2="${padT}"/>
+    <text class="ch-axis" x="${padL - 6}" y="${padT + 4}" text-anchor="end">${max}</text>
+    <text class="ch-axis" x="${padL - 6}" y="${y0 + 4}" text-anchor="end">0</text>`;
+  data.forEach((d, i) => {
+    const x = padL + i * cw + (cw - bw) / 2;
+    const h = d.n / max * ch;
+    if (h > 0) {
+      const r = Math.min(4, bw / 2, h), y = y0 - h;
+      g += `<path class="ch-bar" data-i="${i}" d="M${x},${y0} V${y + r} Q${x},${y} ${x + r},${y} H${x + bw - r} Q${x + bw},${y} ${x + bw},${y + r} V${y0} Z"/>`;
+    }
+    // 数値は「最大」と「今日」だけに添える
+    if (d.n > 0 && (i === maxI || i === n - 1)) g += `<text class="ch-val" x="${x + bw / 2}" y="${y0 - h - 5}" text-anchor="middle">${d.n}</text>`;
+    const showX = n <= 7 || i === n - 1 || (n - 1 - i) % 5 === 0;
+    if (showX) g += `<text class="ch-axis ${i === n - 1 ? 'today' : ''}" x="${x + bw / 2}" y="${H - 7}" text-anchor="middle">${n <= 7 ? `${+d.k.slice(8)}(${WD[weekday(d.k)]})` : `${+d.k.slice(5, 7)}/${+d.k.slice(8)}`}</text>`;
+    g += `<rect class="ch-hit" data-i="${i}" x="${padL + i * cw}" y="${padT - 10}" width="${cw}" height="${ch + 10}"><title>${fmtMD(d.k)}：${d.n}件</title></rect>`;
+  });
+  g += `<line class="ch-base" x1="${padL}" x2="${W - padR}" y1="${y0}" y2="${y0}"/>`;
+  return `<svg class="chart" width="${W}" height="${H}" viewBox="0 0 ${W} ${H}" role="img" aria-label="直近${n}日の完了数の棒グラフ">${g}</svg>`;
+}
+
+function renderStats() {
+  const today = dateKey();
+  const counts = completionCounts();
+  const range = S.statRange;
+  const series = Array.from({ length: range }, (_, i) => { const k = addDays(today, i - range + 1); return { k, n: sumDay(counts[k]) }; });
+  const sumRange = r => Array.from({ length: r }, (_, i) => sumDay(counts[addDays(today, -i)])).reduce((a, b) => a + b, 0);
+  const W = Math.max(280, Math.min(760, ($('#main').clientWidth || 360) - 64));
+  const st = streaks();
+  // リスト別（直近30日）
+  const perList = {};
+  for (let i = 0; i < 30; i++) for (const [l, n] of Object.entries(counts[addDays(today, -i)] || {})) perList[l] = (perList[l] || 0) + n;
+  const lrows = sortedLists().map(l => ({ l, n: perList[l.id] || 0 })).filter(x => x.n).sort((a, b) => b.n - a.n);
+  const lmax = Math.max(1, ...lrows.map(x => x.n));
+  const stateLabel = { ok: '達成', miss: '未達', open: '進行中', none: '予定なし' };
+
+  return `<header class="phead"><div class="ph-title"><b>統計</b><small>完了の記録</small></div></header>
+  <div class="stats">
+    <div class="stat-tiles">
+      <div class="stat-tile"><span>今日</span><b>${sumDay(counts[today])}</b><small>件完了</small></div>
+      <div class="stat-tile"><span>7日間</span><b>${sumRange(7)}</b><small>件完了</small></div>
+      <div class="stat-tile"><span>30日間</span><b>${sumRange(30)}</b><small>件完了</small></div>
+    </div>
+    <section class="card chart-card">
+      <div class="card-head"><h3>日ごとの完了数</h3>
+        <div class="seg small-seg" role="group">${[7, 30].map(r => `<button data-act="stat-range" data-r="${r}" aria-pressed="${range === r}">${r}日</button>`).join('')}</div></div>
+      <p class="ch-tip" id="ch-tip" aria-live="polite">棒をタップすると件数を表示します</p>
+      <div class="chart-wrap">${barChartSVG(series, W)}</div>
+      <table class="sr-only"><caption>直近${range}日の完了数</caption><tr><th>日付</th><th>件数</th></tr>
+        ${series.map(d => `<tr><td>${fmtMD(d.k)}</td><td>${d.n}</td></tr>`).join('')}</table>
+    </section>
+    <section class="card">
+      <div class="card-head"><h3>連続達成</h3></div>
+      <div class="streak"><span class="fire" aria-hidden="true">🔥</span><b>${st.cur}</b><span>日連続</span><small>最長 ${st.best}日（直近1年）</small></div>
+      <div class="streak-days" role="list" aria-label="直近14日の達成状況">${st.recent.map(d =>
+        `<span role="listitem" class="sd ${d.state}" title="${fmtMD(d.k)}：${stateLabel[d.state]}${d.total ? `（${d.done}/${d.total}）` : ''}" aria-label="${fmtMD(d.k)} ${stateLabel[d.state]}">
+          <i>${d.state === 'ok' ? '✓' : d.state === 'miss' ? '−' : d.state === 'open' ? '…' : ''}</i><small>${+d.k.slice(8)}</small></span>`).join('')}</div>
+      <p class="hint" style="margin:8px 0 12px">期限日のある予定と繰り返しの回を、その日のうちにすべて完了した日を数えます。予定のない日は数えず、連続も途切れません。</p>
+    </section>
+    <section class="card">
+      <div class="card-head"><h3>リスト別（30日間）</h3></div>
+      ${lrows.length ? `<div class="lbars">${lrows.map(x => `<div class="lbar" style="--c:${esc(x.l.color)}">
+        <span class="lb-name">${esc(x.l.icon)} ${esc(x.l.name)}</span>
+        <span class="lb-track"><i style="width:${Math.max(2, x.n / lmax * 100)}%"></i></span><b>${x.n}</b></div>`).join('')}</div>`
+        : '<p class="hint" style="margin:8px 0 14px">まだ完了した記録がありません。</p>'}
+    </section>
+  </div>`;
+}
+
 /* ---------- 9-3. 設定 ---------- */
 function notifyText() {
   if (!('Notification' in window)) return '<br>端末の通知：このブラウザでは使えません（iPhoneはホーム画面に追加すると使えます）。';
@@ -1571,7 +1765,21 @@ function renderSettings() {
     </div>
     <div class="card"><h3>データ</h3>
       <div class="set-row"><div class="lbl">保存領域の永続化</div><div class="desc">${persistText}</div></div>
-      <div class="set-row"><div class="desc">リスト ${S.lists.length}件 ／ タスク ${S.tasks.length}件（端末内の IndexedDB に保存）<br>エクスポート／インポート／.ics 書き出しはフェーズ4で追加します。</div></div>
+      <div class="set-row"><div class="desc">リスト ${S.lists.length}件 ／ タスク ${S.tasks.length}件（端末内の IndexedDB に保存）</div></div>
+    </div>
+    <div class="card"><h3>バックアップ・端末間の移行</h3>
+      <div class="set-row"><div class="lbl">JSONで書き出す／読み込む</div>
+        <div class="desc">別の端末へ移すときは、書き出したファイルをその端末で「読み込む」。読み込むと、その端末のデータは置き換わります。<br>
+          最終バックアップ：${S.settings.lastBackupAt ? `${new Date(S.settings.lastBackupAt).toLocaleString('ja-JP', { timeZone: TZ, month: 'numeric', day: 'numeric', hour: '2-digit', minute: '2-digit' })}（${Math.floor((Date.now() - S.settings.lastBackupAt) / 86400000)}日前）` : 'まだありません'}</div>
+        <div class="btn-row"><button class="btn primary" data-act="export-json">💾 書き出す</button><button class="btn" data-act="import-json">📂 読み込む</button></div></div>
+      <div class="set-row"><div class="lbl">カレンダー用（.ics）に書き出す</div>
+        <div class="desc">期限日のある未完了の予定を、iPhoneやGoogleのカレンダーに取り込める形式で書き出します。繰り返しも引き継ぎます。</div>
+        <label class="check-row"><input type="checkbox" id="ics-alarm" checked> 時刻のある予定に通知（アラーム）を付ける</label>
+        <div class="btn-row"><button class="btn" data-act="export-ics">🗓️ .ics を書き出す</button></div></div>
+    </div>
+    <div class="card"><h3>危険な操作</h3>
+      <div class="set-row"><div class="desc">すべてのリスト・タスク・購入履歴・統計を削除し、初期状態に戻します（2回確認します）。</div>
+        <div class="btn-row"><button class="btn danger" data-act="delete-all" style="border:1.5px solid var(--danger)">全データを削除</button></div></div>
     </div>
     <p class="hint" style="text-align:center">ToDoTiles v${APP_VERSION}</p>
   </div>`;
@@ -1657,9 +1865,10 @@ async function deleteTask(id, { animate = true } = {}) {
   }
   scheduleRender(animate && !reduceMotion.matches ? 340 : 0);
   showUndo(`「${t.title}」を削除しました`, async () => {
-    S.tasks.push(t); render(); await saveTasks(t, '削除の取り消し');
+    S.tasks.push(t); render(); await saveTasks(t, '削除の取り消し'); await archiveTasks([t], -1);
   });
   await persist([{ store: 'tasks', del: [id] }], 'タスクの削除');
+  await archiveTasks([t], 1);
 }
 
 async function clearDone(listId) {
@@ -1669,9 +1878,10 @@ async function clearDone(listId) {
   render();
   const shop = listById(listId)?.type === 'shopping';
   showUndo(shop ? `購入済み ${done.length}品をクリアしました` : `完了済み ${done.length}件を削除しました`, async () => {
-    S.tasks.push(...done); render(); await saveTasks(done, '削除の取り消し');
+    S.tasks.push(...done); render(); await saveTasks(done, '削除の取り消し'); await archiveTasks(done, -1);
   });
   await persist([{ store: 'tasks', del: done.map(t => t.id) }], '完了済みの削除');
+  await archiveTasks(done, 1);
 }
 
 /* ---------- 買い物：追加・数量・よく買う物 ---------- */
@@ -1784,10 +1994,11 @@ async function deleteList(id) {
   S.tasks = S.tasks.filter(t => t.listId !== id);
   if (S.route.view === 'list' && S.route.listId === id) go('#/'); else render();
   showUndo(`リスト「${l.name}」を削除しました`, async () => {
-    S.lists.push(l); S.tasks.push(...ts); render();
+    S.lists.push(l); S.tasks.push(...ts); render(); await archiveTasks(ts, -1);
     await persist([{ store: 'lists', put: [l] }, { store: 'tasks', put: ts }], '削除の取り消し');
   });
   await persist([{ store: 'lists', del: [id] }, { store: 'tasks', del: ts.map(t => t.id) }], 'リストの削除');
+  await archiveTasks(ts, 1);
 }
 
 /* =====================================================================
@@ -1823,20 +2034,23 @@ function closeSheet(silent = false) {
 }
 
 let dialogResolve = null;
-function confirmDialog({ title, message = '', ok = 'OK', cancel = 'キャンセル', danger = false }) {
+function confirmDialog({ title, message = '', ok = 'OK', cancel = 'キャンセル', danger = false, requireText = '' }) {
   return new Promise(resolve => {
     const root = $('#dialogRoot');
     const prev = document.activeElement;
     root.innerHTML = `<div class="scrim" data-v="0"></div>
       <div class="dialog" role="alertdialog" aria-modal="true" aria-labelledby="dlg-t" aria-describedby="dlg-m">
         <h3 id="dlg-t">${esc(title)}</h3><p id="dlg-m">${esc(message)}</p>
-        <div class="row"><button class="btn" data-v="0">${esc(cancel)}</button><button class="btn ${danger ? 'danger-fill' : 'primary'}" data-v="1">${esc(ok)}</button></div>
+        ${requireText ? `<input class="inp" id="dlg-text" type="text" autocomplete="off" placeholder="${esc(requireText)}" aria-label="確認の文字" style="margin:-6px 0 16px">` : ''}
+        <div class="row"><button class="btn" data-v="0">${esc(cancel)}</button><button class="btn ${danger ? 'danger-fill' : 'primary'}" data-v="1" ${requireText ? 'disabled' : ''}>${esc(ok)}</button></div>
       </div>`;
     root.hidden = false;
     const finish = v => { root.hidden = true; root.innerHTML = ''; dialogResolve = null; if (prev && document.contains(prev)) prev.focus({ preventScroll: true }); resolve(v); };
     dialogResolve = finish;
-    root.onclick = e => { const b = e.target.closest('[data-v]'); if (b) finish(b.dataset.v === '1'); };
-    root.querySelector('.btn[data-v="0"]').focus();
+    root.onclick = e => { const b = e.target.closest('[data-v]'); if (b && !b.disabled) finish(b.dataset.v === '1'); };
+    const ti = root.querySelector('#dlg-text');
+    if (ti) { ti.addEventListener('input', () => { root.querySelector('.btn[data-v="1"]').disabled = ti.value.trim() !== requireText; }); ti.focus(); }
+    else root.querySelector('.btn[data-v="0"]').focus();
   });
 }
 
@@ -2229,6 +2443,230 @@ async function requestNotifyPermission() {
 }
 
 /* =====================================================================
+   14-3. データ管理（エクスポート / インポート / .ics / 全削除）
+   ===================================================================== */
+const stamp = () => { const p = tokyoParts(); return `${p.y}${pad(p.m)}${pad(p.d)}-${pad(p.h)}${pad(p.mi)}`; };
+/** ファイルを保存させる。スマホでは共有シート（「ファイルに保存」など）を優先 */
+async function saveFile(name, text, mime) {
+  const blob = new Blob([text], { type: mime });
+  const touch = matchMedia('(pointer: coarse)').matches;
+  if (touch && navigator.canShare && window.File) {
+    const file = new File([blob], name, { type: mime });
+    if (navigator.canShare({ files: [file] })) {
+      try { await navigator.share({ files: [file], title: name }); return true; }
+      catch (e) { if (e.name === 'AbortError') return false; /* 失敗時は通常のダウンロードへ */ }
+    }
+  }
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url; a.download = name; document.body.appendChild(a); a.click(); a.remove();
+  setTimeout(() => URL.revokeObjectURL(url), 10000);
+  return true;
+}
+
+async function exportJSON() {
+  const data = {
+    app: 'todotiles', version: APP_VERSION, exportedAt: new Date().toISOString(),
+    lists: S.lists, tasks: S.tasks, history: S.history, settings: S.settings, archive: S.archive, meta: S.meta,
+  };
+  const ok = await saveFile(`todotiles-backup-${stamp()}.json`, JSON.stringify(data, null, 1), 'application/json');
+  if (!ok) return;
+  S.settings.lastBackupAt = Date.now();
+  S.settings.backupSnoozeUntil = 0;
+  render();
+  await saveSettings();
+  showToast('バックアップを書き出しました');
+}
+
+function pickImportFile() {
+  const inp = document.createElement('input');
+  inp.type = 'file'; inp.accept = '.json,application/json';
+  inp.onchange = () => { if (inp.files[0]) importJSON(inp.files[0]); };
+  inp.click();
+}
+async function importJSON(file) {
+  let data;
+  try { data = JSON.parse(await file.text()); }
+  catch (e) { showError(`読み込めませんでした：JSONとして解釈できません（${e.message}）`); return; }
+  const bad = !data || data.app !== 'todotiles' || !Array.isArray(data.lists) || !Array.isArray(data.tasks)
+    || data.lists.some(l => !l || !l.id || typeof l.name !== 'string')
+    || data.tasks.some(t => !t || !t.id || !t.listId || typeof t.title !== 'string');
+  if (bad) { showError('読み込めませんでした：ToDoTiles のバックアップファイルではないか、中身が壊れています。'); return; }
+  const when = data.exportedAt ? new Date(data.exportedAt).toLocaleString('ja-JP', { timeZone: TZ }) : '日時不明';
+  const ok = await confirmDialog({
+    title: 'バックアップを読み込みますか？',
+    message: `${when} の書き出し\nリスト ${data.lists.length}件 ／ タスク ${data.tasks.length}件\n\nいまの端末のデータはすべて置き換わります。必要なら先に「書き出す」で今のデータを保存してください。`,
+    ok: '置き換えて読み込む', danger: true,
+  });
+  if (!ok) return;
+  const settings = { ...DEFAULT_SETTINGS, ...(data.settings || {}), key: 'settings' };
+  try {
+    await DB.write([
+      { store: 'lists', clear: true, put: data.lists },
+      { store: 'tasks', clear: true, put: data.tasks },
+      { store: 'history', clear: true, put: (data.history || []).filter(h => h && h.name) },
+      { store: 'kv', clear: true, put: [settings, { key: 'archive', days: data.archive || {} },
+        { ...(data.meta || {}), key: 'meta', initializedAt: (data.meta && data.meta.initializedAt) || Date.now(), importedAt: Date.now() }] },
+    ]);
+  } catch (e) { reportDbError('読み込み', e); return; }
+  lsSet(LS_THEME, settings.theme);
+  location.hash = '';
+  location.reload();
+}
+
+/* ---- .ics（iPhone/Googleカレンダーなどに取り込める形式） ---- */
+function icsEscape(s) { return String(s || '').replace(/\\/g, '\\\\').replace(/;/g, '\\;').replace(/,/g, '\\,').replace(/\r?\n/g, '\\n'); }
+/** 75オクテットごとに折り返す（UTF-8の文字の途中では切らない） */
+function icsFold(line) {
+  const enc = new TextEncoder();
+  const out = []; let cur = '', bytes = 0;
+  for (const ch of line) {
+    const b = enc.encode(ch).length;
+    if (bytes + b > (out.length ? 74 : 75)) { out.push(cur); cur = ''; bytes = 0; }
+    cur += ch; bytes += b;
+  }
+  out.push(cur);
+  return out.join('\r\n ');
+}
+const icsDate = k => k.replace(/-/g, '');
+function buildICS({ alarm = true } = {}) {
+  const BYDAY = ['SU', 'MO', 'TU', 'WE', 'TH', 'FR', 'SA'];
+  const now = new Date().toISOString().replace(/[-:]/g, '').replace(/\.\d+/, '');
+  const L = ['BEGIN:VCALENDAR', 'VERSION:2.0', 'PRODID:-//ToDoTiles//JA', 'CALSCALE:GREGORIAN', 'METHOD:PUBLISH', 'X-WR-CALNAME:ToDoTiles', 'X-WR-TIMEZONE:Asia/Tokyo',
+    'BEGIN:VTIMEZONE', 'TZID:Asia/Tokyo', 'BEGIN:STANDARD', 'DTSTART:19700101T000000', 'TZOFFSETFROM:+0900', 'TZOFFSETTO:+0900', 'TZNAME:JST', 'END:STANDARD', 'END:VTIMEZONE'];
+  let count = 0;
+  for (const t of liveTasks()) {
+    if (!t.dueDate || (t.done && !isRepeat(t))) continue;
+    const l = listById(t.listId);
+    L.push('BEGIN:VEVENT', `UID:${t.id}@todotiles`, `DTSTAMP:${now}`, `SUMMARY:${icsEscape(`${l.icon} ${t.title}`)}`);
+    if (t.dueTime) {
+      let [h, m] = t.dueTime.split(':').map(Number);
+      let endDate = t.dueDate; m += 30; if (m >= 60) { m -= 60; h++; } if (h >= 24) { h -= 24; endDate = addDays(endDate, 1); }
+      L.push(`DTSTART;TZID=Asia/Tokyo:${icsDate(t.dueDate)}T${t.dueTime.replace(':', '')}00`, `DTEND;TZID=Asia/Tokyo:${icsDate(endDate)}T${pad(h)}${pad(m)}00`);
+    } else {
+      L.push(`DTSTART;VALUE=DATE:${icsDate(t.dueDate)}`, `DTEND;VALUE=DATE:${icsDate(addDays(t.dueDate, 1))}`);
+    }
+    if (isRepeat(t)) {
+      const base = t.repeatStart || t.dueDate;
+      const rule = {
+        daily: 'FREQ=DAILY',
+        weekdays: 'FREQ=WEEKLY;BYDAY=MO,TU,WE,TH,FR',
+        weekly: `FREQ=WEEKLY;BYDAY=${BYDAY[weekday(base)]}`,
+        custom: `FREQ=WEEKLY;BYDAY=${(t.repeatDays || []).map(d => BYDAY[d]).join(',')}`,
+        monthly: `FREQ=MONTHLY;BYMONTHDAY=${+base.slice(8) === 31 ? -1 : +base.slice(8)}`,
+      }[t.repeat];
+      if (rule) L.push(`RRULE:${rule}`);
+    }
+    const desc = [`リスト：${l.name}`, t.note, ...(t.subtasks || []).map(s => `${s.done ? '☑' : '☐'} ${s.title}`)].filter(Boolean).join('\n');
+    L.push(`DESCRIPTION:${icsEscape(desc)}`, `CATEGORIES:${icsEscape(l.name)}`);
+    if (alarm && t.dueTime) L.push('BEGIN:VALARM', 'ACTION:DISPLAY', `DESCRIPTION:${icsEscape(t.title)}`, 'TRIGGER:-PT0M', 'END:VALARM');
+    L.push('END:VEVENT');
+    count++;
+  }
+  L.push('END:VCALENDAR');
+  return { text: L.map(icsFold).join('\r\n') + '\r\n', count };
+}
+async function exportICS() {
+  const alarm = $('#ics-alarm') ? $('#ics-alarm').checked : true;
+  const { text, count } = buildICS({ alarm });
+  if (!count) { showToast('期限日のある未完了の予定がありません'); return; }
+  const ok = await saveFile(`todotiles-${stamp()}.ics`, text, 'text/calendar');
+  if (ok) showToast(`${count}件の予定を書き出しました`);
+}
+
+async function deleteAllData() {
+  const ok1 = await confirmDialog({
+    title: '全データを削除しますか？',
+    message: `リスト ${S.lists.length}件・タスク ${S.tasks.length}件・購入履歴・統計の記録がすべて消えます。\n元に戻すことはできません。`,
+    ok: '次へ', danger: true,
+  });
+  if (!ok1) return;
+  const ok2 = await confirmDialog({
+    title: '本当に削除しますか？（最終確認）',
+    message: '確認のため、下の欄に「削除」と入力してください。',
+    ok: 'すべて削除する', danger: true, requireText: '削除',
+  });
+  if (!ok2) return;
+  try {
+    await DB.write(['lists', 'tasks', 'history', 'kv'].map(store => ({ store, clear: true })));
+  } catch (e) { reportDbError('全データの削除', e); return; }
+  [LS_THEME, LS_NOTIFIED].forEach(k => { try { localStorage.removeItem(k); } catch { /* noop */ } });
+  location.hash = '';
+  location.reload();
+}
+
+/** 最終バックアップから7日以上たっていたら、ホームで控えめに促す */
+function backupDue() {
+  if (!S.tasks.length) return false;
+  const now = Date.now(), DAY = 86400000;
+  if ((S.settings.backupSnoozeUntil || 0) > now) return false;
+  const since = S.settings.lastBackupAt || (S.meta && S.meta.initializedAt) || now;
+  return now - since >= 7 * DAY;
+}
+function renderBackupNudge() {
+  if (!backupDue()) return '';
+  const days = S.settings.lastBackupAt ? Math.floor((Date.now() - S.settings.lastBackupAt) / 86400000) : null;
+  return `<div class="nudge" role="note"><span>💾 ${days === null ? 'まだバックアップがありません' : `最後のバックアップから${days}日たちました`}</span>
+    <button class="link-btn" data-act="export-json">書き出す</button><button class="link-btn muted" data-act="backup-snooze">あとで</button></div>`;
+}
+
+/* =====================================================================
+   14-4. PWA（Service Worker の登録と更新のお知らせ・ホーム画面用アイコン）
+   ===================================================================== */
+const ICON_SVG = `<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 512 512'><rect width='512' height='512' rx='112' fill='#4f6bff'/><rect x='104' y='104' width='136' height='136' rx='32' fill='#fff'/><rect x='272' y='104' width='136' height='136' rx='32' fill='#fff' fill-opacity='.55'/><rect x='104' y='272' width='136' height='136' rx='32' fill='#fff' fill-opacity='.55'/><rect x='272' y='272' width='136' height='136' rx='32' fill='#fff' fill-opacity='.55'/><path d='M138 174l24 24 46-50' fill='none' stroke='#4f6bff' stroke-width='22' stroke-linecap='round' stroke-linejoin='round'/></svg>`;
+/** iPhone のホーム画面用アイコン（PNG）を実行時に作って apple-touch-icon に設定 */
+function setupAppleIcon() {
+  const img = new Image();
+  img.onload = () => {
+    try {
+      const c = document.createElement('canvas'); c.width = c.height = 180;
+      const g = c.getContext('2d');
+      g.fillStyle = '#4f6bff'; g.fillRect(0, 0, 180, 180);   // iOSは角を自動で丸めるので四角く塗る
+      g.drawImage(img, 0, 0, 180, 180);
+      const link = document.createElement('link');
+      link.rel = 'apple-touch-icon'; link.href = c.toDataURL('image/png');
+      document.head.appendChild(link);
+    } catch { /* noop */ }
+  };
+  img.src = 'data:image/svg+xml,' + encodeURIComponent(ICON_SVG.replace("rx='112'", "rx='0'"));
+  const fav = document.createElement('link');
+  fav.rel = 'icon'; fav.type = 'image/svg+xml'; fav.href = 'data:image/svg+xml,' + encodeURIComponent(ICON_SVG);
+  document.head.appendChild(fav);
+}
+function registerSW() {
+  if (!('serviceWorker' in navigator)) return;
+  // 開発中（localhost）は古いキャッシュを見ないよう登録しない。?sw=1 で強制
+  if (/^(localhost|127\.0\.0\.1)$/.test(location.hostname) && !/[?&]sw=1/.test(location.search)) return;
+  let hasController = !!navigator.serviceWorker.controller;
+  let reloading = false;
+  navigator.serviceWorker.addEventListener('controllerchange', () => {
+    // 初回インストール（コントローラが無い→有る）では再読み込みしない。以降の更新では読み込み直す
+    if (!hasController) { hasController = true; return; }
+    if (reloading) return;
+    reloading = true; location.reload();
+  });
+  navigator.serviceWorker.register('./sw.js', { updateViaCache: 'none' }).then(reg => {
+    const offer = w => { if (w && navigator.serviceWorker.controller) showUpdateBar(w); };
+    if (reg.waiting) offer(reg.waiting);
+    reg.addEventListener('updatefound', () => {
+      const w = reg.installing; if (!w) return;
+      w.addEventListener('statechange', () => { if (w.state === 'installed') offer(w); });
+    });
+    document.addEventListener('visibilitychange', () => { if (document.visibilityState === 'visible') reg.update().catch(() => {}); });
+  }).catch(e => console.warn('SW登録に失敗', e));
+}
+function showUpdateBar(worker) {
+  const b = $('#updbar');
+  b.innerHTML = `<span>✨ 新しいバージョンがあります</span><button data-u="go">更新する</button><button data-u="later" aria-label="あとで">✕</button>`;
+  b.hidden = false;
+  b.onclick = e => {
+    const k = e.target.closest('[data-u]')?.dataset.u;
+    if (k === 'go') { b.innerHTML = '<span>更新しています…</span>'; worker.postMessage({ type: 'SKIP_WAITING' }); }
+    if (k === 'later') b.hidden = true;
+  };
+}
+
+/* =====================================================================
    15. ジェスチャ：ドラッグ並べ替え（.handle をつかむ）
    タスク行・ホームのタイル（編集モード）共通。PC はマウス、スマホはタッチ。
    ===================================================================== */
@@ -2386,6 +2824,12 @@ document.addEventListener('click', e => {
     case 'cal-sheet': openDaySheet(a.dataset.date); break;
     case 'cal-open-today': S.settings.calMode = 'today'; S.calAnchor = dateKey(); go('#/calendar'); saveSettings(); break;
     case 'notify-perm': requestNotifyPermission(); break;
+    case 'stat-range': S.statRange = +a.dataset.r; render(); break;
+    case 'export-json': exportJSON(); break;
+    case 'import-json': pickImportFile(); break;
+    case 'export-ics': exportICS(); break;
+    case 'delete-all': deleteAllData(); break;
+    case 'backup-snooze': S.settings.backupSnoozeUntil = Date.now() + 3 * 86400000; render(); saveSettings(); break;
     case 'buy': toggleDone(id); break;
     case 'qty': changeQty(id, +a.dataset.d); break;
     case 'shop-add': shopAddFromInput(id); break;
@@ -2403,6 +2847,18 @@ document.addEventListener('click', e => {
     }
   }
 });
+
+// 統計グラフ：棒に触れる／タップで件数を表示
+function chartTip(e) {
+  const hit = e.target.closest && e.target.closest('.ch-hit'); if (!hit) return;
+  const svg = hit.closest('svg'); const i = hit.dataset.i;
+  const d = completionCounts(); const k = addDays(dateKey(), +i - S.statRange + 1);
+  $$('.ch-bar', svg).forEach(b => b.classList.toggle('dim', b.dataset.i !== i));
+  const tip = $('#ch-tip'); if (tip) tip.textContent = `${fmtMD(k)}：${sumDay(d[k])}件 完了`;
+}
+document.addEventListener('pointerover', chartTip);
+document.addEventListener('click', chartTip);
+document.addEventListener('pointerout', e => { if (e.target.closest && e.target.closest('.chart') && !e.relatedTarget?.closest?.('.chart')) $$('.ch-bar.dim').forEach(b => b.classList.remove('dim')); });
 
 // PC：右クリックメニュー（Android の長押しでも開く）
 document.addEventListener('contextmenu', e => {
@@ -2449,6 +2905,8 @@ document.addEventListener('keydown', e => {
   }
 });
 window.addEventListener('resize', closeMenu);
+let resizeTimer = 0;
+window.addEventListener('resize', () => { clearTimeout(resizeTimer); resizeTimer = setTimeout(() => { if (S.route.view === 'stats') render(); }, 200); });
 window.addEventListener('scroll', closeMenu, { passive: true });
 
 /* =====================================================================
@@ -2500,6 +2958,8 @@ async function init() {
   render();
   requestPersist();
   checkAlarms();
+  setupAppleIcon();
+  registerSW();
   setInterval(tick, 20000);
 }
 init();

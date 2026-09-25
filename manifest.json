@@ -1,0 +1,26 @@
+{
+  "name": "ToDoTiles — TODO・買い物・予定",
+  "short_name": "ToDoTiles",
+  "description": "起動した瞬間に「何をするか」と「どこまで達成したか」が分かる、TODO・買い物・予定管理アプリ",
+  "lang": "ja",
+  "start_url": "./",
+  "scope": "./",
+  "display": "standalone",
+  "orientation": "any",
+  "background_color": "#f3f4f7",
+  "theme_color": "#4f6bff",
+  "icons": [
+    {
+      "src": "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 512 512'%3E%3Crect width='512' height='512' rx='112' fill='#4f6bff'/%3E%3Crect x='104' y='104' width='136' height='136' rx='32' fill='#fff'/%3E%3Crect x='272' y='104' width='136' height='136' rx='32' fill='#fff' fill-opacity='.55'/%3E%3Crect x='104' y='272' width='136' height='136' rx='32' fill='#fff' fill-opacity='.55'/%3E%3Crect x='272' y='272' width='136' height='136' rx='32' fill='#fff' fill-opacity='.55'/%3E%3Cpath d='M138 174l24 24 46-50' fill='none' stroke='#4f6bff' stroke-width='22' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E",
+      "sizes": "any",
+      "type": "image/svg+xml",
+      "purpose": "any"
+    },
+    {
+      "src": "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 512 512'%3E%3Crect width='512' height='512' fill='#4f6bff'/%3E%3Cg transform='translate(76.8 76.8) scale(.7)'%3E%3Crect x='104' y='104' width='136' height='136' rx='32' fill='#fff'/%3E%3Crect x='272' y='104' width='136' height='136' rx='32' fill='#fff' fill-opacity='.55'/%3E%3Crect x='104' y='272' width='136' height='136' rx='32' fill='#fff' fill-opacity='.55'/%3E%3Crect x='272' y='272' width='136' height='136' rx='32' fill='#fff' fill-opacity='.55'/%3E%3Cpath d='M138 174l24 24 46-50' fill='none' stroke='#4f6bff' stroke-width='22' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/g%3E%3C/svg%3E",
+      "sizes": "any",
+      "type": "image/svg+xml",
+      "purpose": "maskable"
+    }
+  ]
+}
