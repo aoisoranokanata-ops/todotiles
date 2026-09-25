@@ -300,6 +300,108 @@ select.inp { background-image: linear-gradient(45deg, transparent 50%, var(--mut
 .pchip.warn { background: color-mix(in srgb, var(--warn) 18%, transparent); color: var(--warn); cursor: default; }
 
 /* =====================================================================
+   6-3. カレンダー・今日の予定
+   ===================================================================== */
+body[data-view="calendar"] #main { max-width: 1280px; }
+.agenda { margin: -6px 16px 18px; padding: 10px 12px 6px; background: var(--surface); border-radius: 20px; box-shadow: var(--shadow); }
+.ag-head .link-btn { font-size: 13px; }
+.ag-head { display: flex; align-items: center; justify-content: space-between; padding: 0 2px 0 6px; }
+.ag-head b { font-size: 14px; }
+.ag-more { display: block; margin: 0 auto; font-size: 13px; }
+.inst { display: flex; align-items: center; min-height: 48px; border-radius: 12px; --c: var(--accent); }
+.inst + .inst { border-top: 1px solid var(--line); border-radius: 0; }
+.inst .chk { width: 46px; min-height: 48px; }
+.inst .chk i { width: 22px; height: 22px; }
+.inst .chk i svg { width: 13px; height: 13px; }
+.inst.done .chk i { background: var(--c); }
+.inst.done .chk i svg { transform: scale(1); }
+.inst-main { flex: 1; min-width: 0; min-height: 48px; display: flex; align-items: center; gap: 8px; border: 0; background: none; text-align: left; padding: 4px 8px 4px 0; }
+.inst-ico { font-size: 18px; flex: none; }
+.inst-t { flex: 1; min-width: 0; font-size: 15px; line-height: 1.35; word-break: break-word; }
+.inst-t .prio-dot { width: 8px; height: 8px; margin-right: 5px; }
+.inst-meta { flex: none; font-size: 12px; color: var(--muted); white-space: nowrap; }
+.inst-meta .late, .late { color: var(--danger); font-weight: 700; }
+.inst.done .inst-t { color: var(--muted); text-decoration: line-through; }
+.inst.done .inst-ico { filter: grayscale(.8); opacity: .6; }
+
+.cal-modes { padding: 0 16px 12px; max-width: 480px; }
+.day { padding: 0 12px; max-width: 760px; }
+.day-prog { display: flex; align-items: center; gap: 10px; margin: 0 6px 12px; font-size: 13px; color: var(--muted); }
+.day-prog .pbar { flex: 1; }
+.pbar { height: 6px; border-radius: 3px; background: var(--ring-bg); overflow: hidden; }
+.pbar i { display: block; height: 100%; background: var(--ok); border-radius: 3px; transition: width .4s; }
+.cal-sec { background: var(--surface); border-radius: 18px; box-shadow: var(--shadow); padding: 6px 10px 6px 6px; margin-bottom: 12px; }
+.cal-sec h3 { margin: 6px 6px 4px; font-size: 13px; color: var(--muted); }
+.cal-sec.od { box-shadow: 0 0 0 1.5px color-mix(in srgb, var(--danger) 55%, transparent), var(--shadow); }
+.cal-sec.od h3 { color: var(--danger); }
+.timeline { position: relative; }
+.tl-row { display: flex; align-items: stretch; }
+.tl-row + .tl-row { border-top: 1px solid var(--line); }
+.tl-time { flex: none; width: 52px; padding: 15px 0 0 6px; font-size: 13px; font-weight: 700; font-variant-numeric: tabular-nums; color: var(--muted); }
+.tl-card { flex: 1; min-width: 0; }
+.tl-card .inst { border-top: 0; }
+.tl-now { display: flex; align-items: center; gap: 6px; margin: 2px 0; color: var(--danger); font-size: 11.5px; font-weight: 800; }
+.tl-now span { width: 46px; padding-left: 6px; }
+.tl-now i { flex: 1; height: 2px; background: var(--danger); border-radius: 1px; position: relative; }
+.tl-now i::before { content: ''; position: absolute; left: -4px; top: -3px; width: 8px; height: 8px; border-radius: 50%; background: var(--danger); }
+
+.week { display: flex; flex-direction: column; gap: 10px; padding: 0 12px; }
+.wday { background: var(--surface); border-radius: 16px; box-shadow: var(--shadow); padding: 4px 8px 6px 4px; }
+.wday.is-today { box-shadow: 0 0 0 2px var(--accent), var(--shadow); }
+.wday.past { opacity: .8; }
+.wd-head { display: flex; align-items: baseline; gap: 6px; width: 100%; min-height: 44px; border: 0; background: none; padding: 6px 8px 4px; text-align: left; }
+.wd-head b { font-size: 20px; }
+.wd-head span { font-size: 13px; color: var(--muted); font-weight: 700; }
+.wd-head .wd-count { margin-left: auto; font-weight: 600; }
+.wday.is-today .wd-head b, .wday.is-today .wd-head span:first-of-type { color: var(--accent); }
+.wday .pbar { margin: 0 8px 4px; height: 4px; }
+.wd-empty { margin: 0 8px 6px; color: var(--muted); font-size: 13px; }
+.sun { color: #e0484d !important; } .sat { color: #3b82f6 !important; }
+@media (min-width: 900px) {
+  .week { display: grid; grid-template-columns: repeat(7, minmax(0, 1fr)); gap: 8px; align-items: start; }
+  .wday { min-height: 240px; }
+  .wday .inst .chk { width: 36px; }
+  .wday .inst-meta { display: none; }
+  .wday .inst-t { font-size: 13.5px; }
+  .wday .inst-ico { font-size: 15px; }
+}
+
+.month { padding: 0 8px; }
+.mhead, .mgrid { display: grid; grid-template-columns: repeat(7, minmax(0, 1fr)); }
+.mhead div { text-align: center; font-size: 12px; font-weight: 700; color: var(--muted); padding: 4px 0 6px; }
+.mgrid { gap: 3px; }
+.mcell {
+  min-height: 64px; border: 0; border-radius: 10px; background: var(--surface); padding: 4px 2px 3px;
+  display: flex; flex-direction: column; align-items: center; gap: 1px; overflow: hidden;
+}
+@media (min-width: 900px) { .mcell { min-height: 96px; } .micons { font-size: 18px !important; } }
+.mcell.out { opacity: .38; }
+.mcell.is-today { box-shadow: inset 0 0 0 2px var(--accent); }
+.mcell.is-today .mnum { background: var(--accent); color: #fff !important; }
+.mcell.all-done .mnum::after { content: '✓'; font-size: 9px; color: var(--ok); margin-left: 1px; }
+.mcell:hover { background: var(--surface2); }
+.mnum { font-size: 13px; font-weight: 700; min-width: 22px; height: 22px; line-height: 22px; border-radius: 11px; padding: 0 3px; }
+.micons { font-size: 13px; line-height: 1.2; letter-spacing: -1px; white-space: nowrap; }
+.mdots { display: flex; gap: 2px; align-items: center; min-height: 8px; }
+.mdots .dot { width: 5px; height: 5px; border-radius: 50%; background: var(--accent); }
+.mdots .dot.done { background: var(--ring-bg); }
+.mdots small { font-size: 9px; color: var(--muted); }
+.sheet-insts .inst { border-radius: 0; }
+
+#alarms { position: fixed; left: 12px; right: 12px; top: calc(env(safe-area-inset-top) + 8px); z-index: 65; display: flex; flex-direction: column; gap: 8px; max-width: 520px; margin: 0 auto; pointer-events: none; }
+.alarm {
+  pointer-events: auto; display: flex; align-items: center; gap: 8px; padding: 8px 6px 8px 14px; border-radius: 16px;
+  background: var(--surface); box-shadow: 0 0 0 2px var(--c), var(--shadow-lg); animation: alarmIn .3s ease;
+}
+.al-ico { font-size: 26px; animation: ring 1s ease 2; }
+.al-text { flex: 1; min-width: 0; font-size: 15px; line-height: 1.35; }
+.al-text small { display: block; color: var(--muted); font-size: 12px; }
+.al-btn { min-height: 44px; padding: 0 14px; border: 0; border-radius: 12px; background: var(--c); color: #fff; font-weight: 800; }
+.al-x { min-width: 44px; min-height: 44px; border: 0; background: none; color: var(--muted); border-radius: 12px; }
+@keyframes alarmIn { from { transform: translateY(-20px); opacity: 0; } }
+@keyframes ring { 20%, 60% { transform: rotate(-15deg); } 40%, 80% { transform: rotate(15deg); } }
+
+/* =====================================================================
    6-2. 買い物モード
    ===================================================================== */
 .shop-add { display: flex; gap: 8px; padding: 0 12px 12px; }
@@ -420,6 +522,7 @@ body.sheet-open #toast { bottom: calc(var(--kb) + env(safe-area-inset-bottom) + 
 <div id="toast" role="status" aria-live="polite"></div>
 <div id="errbar" role="alert" hidden></div>
 <div id="celebrate" aria-hidden="true"></div>
+<div id="alarms" aria-live="assertive"></div>
 
 <script>
 'use strict';
@@ -427,7 +530,7 @@ body.sheet-open #toast { bottom: calc(var(--kb) + env(safe-area-inset-bottom) + 
    ToDoTiles — フェーズ1
    データ層(IndexedDB) / ホームのタイル / リスト画面 / 完了スタイル3種 / 元に戻す
    ===================================================================== */
-const APP_VERSION = '0.2.0';
+const APP_VERSION = '0.3.0';
 const DB_NAME = 'todotiles';
 const DB_VER = 1;
 const LS_THEME = 'todotiles.theme';   // 起動時のちらつき防止用（本体の設定は IndexedDB）
@@ -553,7 +656,7 @@ const STYLE_INFO = {
   check:  { label: 'チェック', desc: '文字はその場に残し、チェックマークと薄い色で表示します' },
 };
 const PRIO_LABEL = ['なし', '低', '中', '高'];
-const DEFAULT_SETTINGS = { key: 'settings', theme: 'system', weekStart: 1, defaultCompleteStyle: 'strike', lastListId: null, lastBackupAt: null };
+const DEFAULT_SETTINGS = { key: 'settings', theme: 'system', weekStart: 1, defaultCompleteStyle: 'strike', lastListId: null, lastBackupAt: null, calMode: 'today' };
 const DEFAULT_LISTS = [
   ['買い物', '🛒', '#22a06b', 'shopping', 'vanish'],
   ['家事',   '🏠', '#f59e0b', 'todo', 'check'],
@@ -569,6 +672,7 @@ const S = {
   expanded: new Set(),       // サブタスクを開いているタスクID
   historyOpen: new Set(),    // 完了履歴を開いているリストID
   persisted: null,           // navigator.storage.persist() の結果
+  calAnchor: null,           // カレンダーで表示中の基準日（起動時に今日）
   ready: false,
 };
 
@@ -580,11 +684,11 @@ const liveTasks = () => S.tasks.filter(t => listById(t.listId));
 function nextOrder(listId) { return tasksOf(listId).reduce((m, t) => Math.max(m, t.order ?? 0), -1) + 1; }
 
 function newTask(listId, title, extra = {}) {
-  return {
+  return normalizeRepeat({
     id: uid(), listId, title, note: '', dueDate: null, dueTime: null, priority: 0,
-    repeat: 'none', subtasks: [], done: false, doneAt: null, doneDates: [],
+    repeat: 'none', repeatStart: null, repeatDays: [], subtasks: [], done: false, doneAt: null, doneDates: [],
     createdAt: Date.now(), order: nextOrder(listId), quantity: 1, ...extra,
-  };
+  });
 }
 function newList(extra = {}) {
   return {
@@ -596,11 +700,17 @@ function newList(extra = {}) {
 
 /** 「今日分」の集計
  *  対象 = 未完了で期限が今日以前(または期限なし)のタスク ＋ 今日完了したタスク
- *  （未来の期限のタスクは今日分に含めない） */
+ *  （未来の期限のタスクは今日分に含めない）
+ *  繰り返し = 今日が発生日ならその回（完了は doneDates）、今回が過去なら期限切れとして1件 */
 function todayStats(tasks) {
   const today = dateKey();
   let total = 0, done = 0;
   for (const t of tasks) {
+    if (isRepeat(t)) {
+      if (occursOn(t, today)) { total++; if (t.doneDates.includes(today)) done++; }
+      else if (t.dueDate < today) total++;
+      continue;
+    }
     if (t.done) { if (t.doneAt && dateKey(t.doneAt) === today) { total++; done++; } }
     else if (!t.dueDate || t.dueDate <= today) total++;
   }
@@ -623,13 +733,92 @@ function relDate(k) {
   return d === 0 ? `今日 ${fmtMD(k)}` : d === 1 ? `明日 ${fmtMD(k)}` : d === 2 ? `明後日 ${fmtMD(k)}` : fmtMD(k);
 }
 
-/** 繰り返しの表示名（展開・日付ごとの完了はフェーズ3） */
-const REPEAT_LABEL = { none: 'なし', daily: '毎日', weekdays: '平日', weekly: '毎週', monthly: '毎月' };
+/* =====================================================================
+   4-1. 繰り返しタスク
+   - repeatStart: 繰り返しの基準日（毎週の曜日・毎月の日付はここから決まる）
+   - dueDate    : 「今回」の回。完了するとその日を doneDates に記録して次の回へ進む
+   - 取りこぼした過去の回は溜めずに飛ばす（期限切れは直近の1回だけ）
+   - カレンダーには「完了済みの過去の回」と「今回以降の回」を展開して表示する
+   ===================================================================== */
+const REPEAT_LABEL = { none: 'なし', daily: '毎日', weekdays: '平日（月〜金）', weekly: '毎週', monthly: '毎月', custom: '曜日を指定' };
+const isRepeat = t => !!t.repeat && t.repeat !== 'none';
 function repeatLabel(t) {
-  if (!t.repeat || t.repeat === 'none') return '';
-  if (t.repeat === 'weekly' && t.dueDate) return `毎週${WD[weekday(t.dueDate)]}曜`;
-  if (t.repeat === 'monthly' && t.dueDate) return `毎月${+t.dueDate.slice(8)}日`;
+  if (!isRepeat(t)) return '';
+  const base = t.repeatStart || t.dueDate;
+  if (t.repeat === 'weekly' && base) return `毎週${WD[weekday(base)]}曜`;
+  if (t.repeat === 'monthly' && base) return `毎月${+base.slice(8)}日`;
+  if (t.repeat === 'weekdays') return '平日';
+  if (t.repeat === 'custom') return '毎週' + [...(t.repeatDays || [])].sort((a, b) => ((a + 6) % 7) - ((b + 6) % 7)).map(d => WD[d]).join('・');
   return REPEAT_LABEL[t.repeat] || '';
+}
+function occursOn(t, k) {
+  if (!isRepeat(t) || !t.repeatStart || k < t.repeatStart) return false;
+  const wd = weekday(k);
+  switch (t.repeat) {
+    case 'daily': return true;
+    case 'weekdays': return wd >= 1 && wd <= 5;
+    case 'weekly': return wd === weekday(t.repeatStart);
+    case 'custom': return (t.repeatDays || []).includes(wd);
+    case 'monthly': {
+      const sd = +t.repeatStart.slice(8);
+      const [y, m, d] = k.split('-').map(Number);
+      return d === Math.min(sd, new Date(Date.UTC(y, m, 0)).getUTCDate());
+    }
+  }
+  return false;
+}
+/** from 以降（inclusive なら from を含む）で最初に発生する日 */
+function nextOcc(t, from, inclusive = true) {
+  let k = inclusive ? from : addDays(from, 1);
+  for (let i = 0; i < 800; i++) { if (occursOn(t, k)) return k; k = addDays(k, 1); }
+  return null;
+}
+/** 回 k を完了した後の「今回」：次の未完了の回。過去に取り残されるなら今日以降へ飛ばす */
+function advancePending(t, k) {
+  const today = dateKey();
+  const skipDone = n => { while (n && t.doneDates.includes(n)) n = nextOcc(t, n, false); return n; };
+  let n = skipDone(nextOcc(t, k, false));
+  if (n && n < today) n = skipDone(nextOcc(t, today, true));
+  return n || k;
+}
+/** 繰り返し設定の正規化（新規作成・編集・読み込み時） */
+function normalizeRepeat(t, { resetStart = false } = {}) {
+  t.doneDates = t.doneDates || [];
+  if (!isRepeat(t)) return t;
+  t.done = false; t.doneAt = null;
+  if (!t.dueDate) t.dueDate = dateKey();
+  if (t.repeat === 'custom' && !(t.repeatDays || []).length) t.repeatDays = [weekday(t.dueDate)];
+  if (resetStart || !t.repeatStart) {
+    t.repeatStart = t.dueDate;
+    const first = nextOcc(t, t.dueDate, true);   // 曜日指定などで基準日が当たらない場合は最初の回へ
+    if (first) { t.dueDate = first; t.repeatStart = first; }
+  }
+  return t;
+}
+
+/** ある日に表示する「回」の一覧 [{t, date, done}] */
+function instancesOn(k) {
+  const out = [];
+  for (const t of liveTasks()) {
+    if (isRepeat(t)) {
+      if (!occursOn(t, k)) continue;
+      const done = t.doneDates.includes(k);
+      if (done || k >= t.dueDate) out.push({ t, date: k, done });
+    } else if (t.dueDate === k) out.push({ t, date: k, done: t.done });
+  }
+  return out.sort((a, b) => (a.t.dueTime || '') < (b.t.dueTime || '') ? -1 : (a.t.dueTime || '') > (b.t.dueTime || '') ? 1
+    : (listById(a.t.listId).order - listById(b.t.listId).order) || (a.t.order - b.t.order));
+}
+/** 期限切れ（今日より前の未完了）。繰り返しは「今回」だけ */
+function overdueInstances() {
+  const today = dateKey();
+  return liveTasks().filter(t => !t.done && t.dueDate && t.dueDate < today)
+    .map(t => ({ t, date: t.dueDate, done: false }))
+    .sort((a, b) => a.date < b.date ? -1 : a.date > b.date ? 1 : (a.t.dueTime || '') < (b.t.dueTime || '') ? -1 : 1);
+}
+function dayProgress(k) {
+  const xs = instancesOn(k);
+  return { total: xs.length, done: xs.filter(x => x.done).length };
 }
 
 /* =====================================================================
@@ -726,7 +915,7 @@ function findListByTag(name) {
 function parseQuick(raw, { listId = null, skip = new Set() } = {}) {
   let s = ' ' + String(raw).replace(/[０-９：／＃]/g, c => String.fromCharCode(c.charCodeAt(0) - 0xFEE0)) + ' ';
   const today = dateKey();
-  const r = { title: '', listId, dueDate: null, dueTime: null, repeat: 'none', quantity: 1, chips: [] };
+  const r = { title: '', listId, dueDate: null, dueTime: null, repeat: 'none', repeatDays: [], quantity: 1, chips: [] };
   const seen = new Set();
   let repeatWd = null, repeatDay = null;
 
@@ -754,6 +943,10 @@ function parseQuick(raw, { listId = null, skip = new Set() } = {}) {
   const target = listById(r.listId);
 
   // --- 繰り返し ---
+  rule('repeat', new RegExp('毎週\\s?の?([日月火水木金土](?:[・、,と]?[日月火水木金土])+)曜?日?' + SUF), m => {
+    const days = [...new Set([...m[1]].filter(c => c in WD_IDX).map(c => WD_IDX[c]))];
+    return { label: `🔁 毎週${days.map(d => WD[d]).join('・')}`, apply: () => { r.repeat = 'custom'; r.repeatDays = days; } };
+  });
   rule('repeat', new RegExp('毎週\\s?の?([日月火水木金土])曜日?' + SUF), m => ({ label: `🔁 毎週${m[1]}曜`, apply: () => { r.repeat = 'weekly'; repeatWd = WD_IDX[m[1]]; } }));
   rule('repeat', new RegExp('毎月\\s?(\\d{1,2})日' + SUF), m => (+m[1] >= 1 && +m[1] <= 31) ? { label: `🔁 毎月${+m[1]}日`, apply: () => { r.repeat = 'monthly'; repeatDay = +m[1]; } } : null);
   rule('repeat', new RegExp('毎?平日' + SUF), () => ({ label: '🔁 平日', apply: () => { r.repeat = 'weekdays'; } }));
@@ -801,6 +994,7 @@ function parseQuick(raw, { listId = null, skip = new Set() } = {}) {
   // --- 繰り返しの初回日を補う ---
   if (r.repeat !== 'none' && !r.dueDate) {
     if (r.repeat === 'weekly') r.dueDate = nextWeekday(today, repeatWd ?? weekday(today));
+    else if (r.repeat === 'custom') r.dueDate = nextOcc({ repeat: 'custom', repeatDays: r.repeatDays, repeatStart: today }, today, true);
     else if (r.repeat === 'weekdays') { let k = today; while (weekday(k) === 0 || weekday(k) === 6) k = addDays(k, 1); r.dueDate = k; }
     else if (r.repeat === 'monthly' && repeatDay) {
       let k = monthDay(ty, tm, repeatDay);
@@ -847,6 +1041,11 @@ async function loadAll() {
   const [lists, tasks, history, kv] = await Promise.all(['lists', 'tasks', 'history', 'kv'].map(s => DB.getAll(s)));
   S.lists = lists; S.tasks = tasks; S.history = history;
   S.settings = { ...DEFAULT_SETTINGS, ...(kv.find(r => r.key === 'settings') || {}) };
+  // 旧版(フェーズ2以前)の繰り返しタスクに基準日を補う
+  const fixed = S.tasks.filter(t => isRepeat(t) && (!t.repeatStart || t.done || !t.doneDates));
+  fixed.forEach(t => normalizeRepeat(t));
+  if (fixed.length) await DB.write([{ store: 'tasks', put: fixed }]);
+  S.tasks.forEach(t => { if (!t.doneDates) t.doneDates = []; });
   const meta = kv.find(r => r.key === 'meta');
   if (!meta) {
     // 初回起動：初期リストを作成（一度作ったら、全部消されても再作成しない）
@@ -949,6 +1148,7 @@ function render(scrollTop = false) {
   const r = S.route, main = $('#main'), A = $('#paneA'), B = $('#paneB');
   const split = isWide.matches && (r.view === 'home' || r.view === 'list');
   main.classList.toggle('split', split);
+  document.body.dataset.view = r.view;
   if (split) {
     A.innerHTML = renderHome();
     B.innerHTML = r.view === 'list' ? renderList(r.listId) : renderPickHint();
@@ -956,6 +1156,7 @@ function render(scrollTop = false) {
     A.innerHTML = r.view === 'home' ? renderHome()
       : r.view === 'list' ? renderList(r.listId)
       : r.view === 'settings' ? renderSettings()
+      : r.view === 'calendar' ? renderCalendar()
       : renderSoon(r.view);
     B.innerHTML = '';
   }
@@ -994,6 +1195,7 @@ function renderHome() {
       </div>
     </div>
   </section>
+  ${S.homeEdit ? '' : renderAgenda()}
   ${S.homeEdit ? '<p class="hint">左上の ⠿ をドラッグして並べ替え／タイルをタップして編集</p>' : ''}
   <div class="tiles ${S.homeEdit ? 'editing' : ''}" data-sort="lists">
     ${sortedLists().map(l => tileHTML(l, sel)).join('')}
@@ -1020,7 +1222,7 @@ function renderPickHint() {
   return `<div class="placeholder"><div><div class="big">👈</div><p>左のタイルからリストを選んでください</p></div></div>`;
 }
 function renderSoon(view) {
-  const m = { calendar: ['📅', 'カレンダー', 'フェーズ3で追加します（今日・週間・月間）'], stats: ['📊', '統計', 'フェーズ4で追加します'] }[view];
+  const m = { stats: ['📊', '統計', 'フェーズ4で追加します'] }[view];
   return `<header class="phead"><div class="ph-title"><b>${m[1]}</b></div></header>
     <div class="placeholder"><div><div class="big">${m[0]}</div><p>${m[2]}</p></div></div>`;
 }
@@ -1163,7 +1365,189 @@ function taskRow(t, l, sortable, showDoneDate = false) {
   </div>`;
 }
 
-/* ---------- 9-3. 設定（フェーズ1の範囲） ---------- */
+/* ---------- 9-4. カレンダー（今日 / 週間 / 月間） ---------- */
+/** カレンダー・予定カード共通の1行（回 = {t, date, done}） */
+function instRow(x, { showDate = false, overdue = false, noTime = false } = {}) {
+  const t = x.t, l = listById(t.listId);
+  const today = dateKey();
+  const late = !x.done && (overdue || (x.date === today && t.dueTime && t.dueTime < nowHM()) || x.date < today);
+  const meta = [];
+  if (showDate) {
+    const dd = diffDays(today, x.date);
+    meta.push(`<span class="${late ? 'late' : ''}">${dd === 0 ? '今日' : dd === -1 ? '昨日' : dd === 1 ? '明日' : fmtMD(x.date)}</span>`);
+  }
+  if (t.dueTime && !noTime) meta.push(`<span class="${late ? 'late' : ''}">${t.dueTime}</span>`);
+  if (isRepeat(t)) meta.push(`<span>🔁</span>`);
+  if (l.type === 'shopping' && t.quantity > 1) meta.push(`<span>×${t.quantity}</span>`);
+  return `<div class="inst ${x.done ? 'done' : ''}" data-id="${t.id}" data-date="${x.date}" style="--c:${esc(l.color)}">
+    <button class="chk" data-act="occ" data-id="${t.id}" data-date="${x.date}" role="checkbox" aria-checked="${x.done}"
+      aria-label="${esc(t.title)}（${fmtMD(x.date)}）を${x.done ? '未完了に戻す' : '完了にする'}"><i>${ICON.check}</i></button>
+    <button class="inst-main" data-act="edit-task" data-id="${t.id}">
+      <span class="inst-ico" aria-hidden="true">${esc(l.type === 'shopping' ? itemIcon(t) : l.icon)}</span>
+      <span class="inst-t">${t.priority ? `<span class="prio-dot p${t.priority}"></span>` : ''}${esc(t.title)}</span>
+      ${meta.length ? `<span class="inst-meta">${meta.join(' ')}</span>` : ''}
+    </button>
+  </div>`;
+}
+const progBar = (done, total) => `<div class="pbar" role="img" aria-label="${done}/${total}件完了"><i style="width:${total ? Math.round(done / total * 100) : 0}%"></i></div>`;
+
+function calTitle() {
+  const m = S.settings.calMode, a = S.calAnchor, today = dateKey();
+  if (m === 'today') return [a === today ? '今日' : fmtLong(a), a === today ? fmtLong(a) : `${diffDays(today, a) > 0 ? diffDays(today, a) + '日後' : -diffDays(today, a) + '日前'}`];
+  if (m === 'week') { const s = startOfWeek(a), e = addDays(s, 6); return [`${fmtMD(s).replace(/\(.\)/, '')} – ${fmtMD(e).replace(/\(.\)/, '')}`, s <= today && today <= e ? '今週' : '']; }
+  const [y, mo] = a.split('-').map(Number);
+  return [`${y}年${mo}月`, ''];
+}
+function renderCalendar() {
+  const m = S.settings.calMode;
+  const [title, sub] = calTitle();
+  const modes = [['today', '今日'], ['week', '週間'], ['month', '月間']];
+  let html = `<header class="phead">
+    <div class="ph-title"><b>${esc(title)}</b>${sub ? `<small>${esc(sub)}</small>` : ''}</div>
+    <button class="icon-btn" data-act="cal-move" data-d="-1" aria-label="前へ">${ICON.back}</button>
+    <button class="txt-btn" data-act="cal-today">今日</button>
+    <button class="icon-btn" data-act="cal-move" data-d="1" aria-label="次へ"><span style="transform:scaleX(-1);display:inline-grid">${ICON.back}</span></button>
+  </header>
+  <div class="cal-modes"><div class="seg" role="tablist">${modes.map(([k, v]) =>
+    `<button role="tab" data-act="cal-mode" data-m="${k}" aria-pressed="${m === k}" aria-selected="${m === k}">${v}</button>`).join('')}</div></div>`;
+  html += m === 'today' ? renderDay(S.calAnchor) : m === 'week' ? renderWeek(S.calAnchor) : renderMonth(S.calAnchor);
+  return html;
+}
+
+function renderDay(k) {
+  const today = dateKey();
+  const xs = instancesOn(k);
+  const allDay = xs.filter(x => !x.t.dueTime);
+  const timed = xs.filter(x => x.t.dueTime);
+  const od = k === today ? overdueInstances() : [];
+  const p = dayProgress(k);
+  let html = `<div class="day">`;
+  if (p.total) html += `<div class="day-prog"><span>${p.done}/${p.total}件完了</span>${progBar(p.done, p.total)}</div>`;
+  if (od.length) html += `<section class="cal-sec od"><h3>⚠ 期限切れ ${od.length}件</h3>${od.map(x => instRow(x, { showDate: true, overdue: true })).join('')}</section>`;
+  if (allDay.length) html += `<section class="cal-sec"><h3>終日</h3>${allDay.map(x => instRow(x)).join('')}</section>`;
+  if (timed.length || k === today) {
+    const now = nowHM();
+    let rows = '', nowDone = k !== today;
+    for (const x of timed) {
+      if (!nowDone && x.t.dueTime > now) { rows += nowLine(now); nowDone = true; }
+      rows += `<div class="tl-row"><div class="tl-time ${!x.done && k === today && x.t.dueTime < now ? 'late' : ''}">${x.t.dueTime}</div><div class="tl-card">${instRow(x, { noTime: true })}</div></div>`;
+    }
+    if (!nowDone) rows += nowLine(now);
+    if (timed.length || od.length || allDay.length) html += `<section class="cal-sec"><h3>タイムライン</h3><div class="timeline">${rows}</div></section>`;
+  }
+  if (!xs.length && !od.length) html += `<div class="empty"><div class="big">🗓️</div><p>${k === today ? '今日' : fmtMD(k) + ' '}の予定はありません。<br>＋ から追加できます。</p></div>`;
+  return html + `</div>`;
+}
+const nowLine = hm => `<div class="tl-now" aria-label="現在時刻 ${hm}"><span>${hm}</span><i></i></div>`;
+
+function renderWeek(k) {
+  const today = dateKey();
+  const s = startOfWeek(k);
+  let html = `<div class="week">`;
+  for (let i = 0; i < 7; i++) {
+    const d = addDays(s, i);
+    const xs = instancesOn(d);
+    const p = { total: xs.length, done: xs.filter(x => x.done).length };
+    const wd = weekday(d);
+    html += `<section class="wday ${d === today ? 'is-today' : ''} ${d < today ? 'past' : ''}">
+      <button class="wd-head" data-act="cal-day" data-date="${d}" aria-label="${fmtLong(d)}を1日表示で開く">
+        <b class="${wd === 0 ? 'sun' : wd === 6 ? 'sat' : ''}">${+d.slice(8)}</b><span class="${wd === 0 ? 'sun' : wd === 6 ? 'sat' : ''}">${WD[wd]}</span>
+        <span class="wd-count">${p.total ? `${p.done}/${p.total}` : ''}</span></button>
+      ${p.total ? progBar(p.done, p.total) : ''}
+      <div class="wd-items">${xs.map(x => instRow(x)).join('') || '<p class="wd-empty">—</p>'}</div>
+    </section>`;
+  }
+  return html + `</div>`;
+}
+
+function renderMonth(k) {
+  const today = dateKey();
+  const [y, m] = k.split('-').map(Number);
+  const first = `${y}-${pad(m)}-01`;
+  const start = startOfWeek(first);
+  const ws = S.settings.weekStart ?? 1;
+  let head = '';
+  for (let i = 0; i < 7; i++) { const w = (ws + i) % 7; head += `<div class="${w === 0 ? 'sun' : w === 6 ? 'sat' : ''}">${WD[w]}</div>`; }
+  let cells = '';
+  for (let i = 0; i < 42; i++) {
+    const d = addDays(start, i);
+    if (i === 35 && d.slice(0, 7) !== first.slice(0, 7)) break;   // 6行目が丸ごと翌月なら省く
+    const xs = instancesOn(d);
+    const inMonth = d.slice(0, 7) === first.slice(0, 7);
+    // 件数の多いリストのアイコンを最大3つ
+    const cnt = {};
+    xs.forEach(x => { cnt[x.t.listId] = (cnt[x.t.listId] || 0) + 1; });
+    const icons = Object.keys(cnt).sort((a, b) => cnt[b] - cnt[a]).slice(0, 3).map(id => listById(id).icon).join('');
+    const undone = xs.filter(x => !x.done).length, done = xs.length - undone;
+    const dots = '<i class="dot"></i>'.repeat(Math.min(undone, 4)) + '<i class="dot done"></i>'.repeat(Math.min(done, Math.max(0, 4 - undone)));
+    const more = xs.length > 4 ? `<small>+${xs.length - 4}</small>` : '';
+    const wd = weekday(d);
+    cells += `<button class="mcell ${inMonth ? '' : 'out'} ${d === today ? 'is-today' : ''} ${xs.length && !undone ? 'all-done' : ''}" data-act="cal-sheet" data-date="${d}"
+      aria-label="${fmtLong(d)} 予定${xs.length}件${xs.length ? `（完了${done}件）` : ''}">
+      <span class="mnum ${wd === 0 ? 'sun' : wd === 6 ? 'sat' : ''}">${+d.slice(8)}</span>
+      <span class="micons" aria-hidden="true">${esc(icons)}</span>
+      <span class="mdots" aria-hidden="true">${dots}${more}</span>
+    </button>`;
+  }
+  return `<div class="month"><div class="mhead">${head}</div><div class="mgrid">${cells}</div></div>`;
+}
+
+/** 月間のセルをタップ → その日の詳細をボトムシートで */
+function openDaySheet(k) {
+  const body = () => {
+    const xs = instancesOn(k);
+    return xs.length ? `<div class="sheet-insts">${xs.map(x => instRow(x)).join('')}</div>`
+      : `<p class="hint" style="margin:12px 0">この日の予定はありません。</p>`;
+  };
+  openSheet({
+    title: fmtLong(k),
+    body: body(),
+    foot: `<button class="btn" id="ds-day">1日表示で開く</button><span class="sp"></span><button class="btn primary" id="ds-add">＋ この日に追加</button>`,
+    onMount(el) {
+      const refresh = () => { if (sheetState && sheetState.el === el) $('.sheet-body', el).innerHTML = body(); };
+      $('.sheet-body', el).addEventListener('click', async e => {
+        const a = e.target.closest('[data-act]'); if (!a) return;
+        if (a.dataset.act === 'occ') { await toggleOccurrence(a.dataset.id, a.dataset.date); setTimeout(refresh, 480); }
+        if (a.dataset.act === 'edit-task') openTaskEditor(a.dataset.id);
+      });
+      $('#ds-day', el).addEventListener('click', () => { closeSheet(true); S.settings.calMode = 'today'; S.calAnchor = k; render(true); saveSettings(); });
+      $('#ds-add', el).addEventListener('click', () => { closeSheet(true); openQuickAdd({ date: k }); });
+    },
+  });
+}
+function calMove(dir) {
+  const m = S.settings.calMode, a = S.calAnchor;
+  if (m === 'today') S.calAnchor = addDays(a, dir);
+  else if (m === 'week') S.calAnchor = addDays(a, 7 * dir);
+  else {
+    let [y, mo] = a.split('-').map(Number);
+    mo += dir; if (mo < 1) { mo = 12; y--; } if (mo > 12) { mo = 1; y++; }
+    S.calAnchor = `${y}-${pad(mo)}-01`;
+  }
+  render(true);
+}
+
+/* ---------- 9-5. ホームの「今日の予定」カード（起動時に最上部で分かるように） ---------- */
+function renderAgenda() {
+  const today = dateKey();
+  const od = overdueInstances();
+  const td = instancesOn(today).filter(x => !x.done);
+  const all = [...od.map(x => ({ x, od: true })), ...td.map(x => ({ x, od: false }))];
+  if (!all.length) return '';
+  const shown = all.slice(0, 5);
+  return `<section class="agenda" aria-label="期限切れと今日の予定">
+    <div class="ag-head"><b>今日やること</b>
+      <button class="link-btn" data-act="cal-open-today">カレンダーで見る ›</button></div>
+    ${shown.map(({ x, od }) => instRow(x, { showDate: od, overdue: od })).join('')}
+    ${all.length > shown.length ? `<button class="link-btn ag-more" data-act="cal-open-today">ほか ${all.length - shown.length}件</button>` : ''}
+  </section>`;
+}
+
+/* ---------- 9-3. 設定 ---------- */
+function notifyText() {
+  if (!('Notification' in window)) return '<br>端末の通知：このブラウザでは使えません（iPhoneはホーム画面に追加すると使えます）。';
+  return { granted: '<br>端末の通知：✅ 許可済み', denied: '<br>端末の通知：拒否されています（ブラウザの設定から変更できます）', default: '' }[Notification.permission] || '';
+}
 function renderSettings() {
   const seg = (name, cur, opts) => `<div class="seg" role="group">${opts.map(([v, lab]) =>
     `<button data-act="set" data-k="${name}" data-v="${v}" aria-pressed="${String(cur) === String(v)}">${lab}</button>`).join('')}</div>`;
@@ -1174,11 +1558,16 @@ function renderSettings() {
   <div class="settings">
     <div class="card"><h3>表示</h3>
       <div class="set-row"><div class="lbl">テーマ</div>${seg('theme', S.settings.theme, [['system', 'OS設定'], ['light', 'ライト'], ['dark', 'ダーク']])}</div>
-      <div class="set-row"><div class="lbl">週の開始曜日</div>${seg('weekStart', S.settings.weekStart, [[0, '日曜'], [1, '月曜']])}<div class="desc" style="margin-top:6px">カレンダー（フェーズ3）で使います</div></div>
+      <div class="set-row"><div class="lbl">週の開始曜日</div>${seg('weekStart', S.settings.weekStart, [[0, '日曜'], [1, '月曜']])}<div class="desc" style="margin-top:6px">週間・月間カレンダーと「来週月曜」の解釈に使います</div></div>
     </div>
     <div class="card"><h3>リスト</h3>
       <div class="set-row"><div class="lbl">新しいリストの完了スタイル</div>${seg('defaultCompleteStyle', S.settings.defaultCompleteStyle, Object.entries(STYLE_INFO).map(([k, v]) => [k, v.label]))}
         <div class="desc" style="margin-top:6px">${esc(STYLE_INFO[S.settings.defaultCompleteStyle].desc)}</div></div>
+    </div>
+    <div class="card"><h3>通知</h3>
+      <div class="set-row"><div class="lbl">予定の時刻のお知らせ</div>
+        <div class="desc">アプリを開いている間、時刻になったら画面上部に表示します。${notifyText()}</div>
+        ${'Notification' in window && Notification.permission === 'default' ? '<button class="btn primary" style="margin-top:10px" data-act="notify-perm">端末の通知も許可する</button>' : ''}</div>
     </div>
     <div class="card"><h3>データ</h3>
       <div class="set-row"><div class="lbl">保存領域の永続化</div><div class="desc">${persistText}</div></div>
@@ -1191,8 +1580,40 @@ function renderSettings() {
 /* =====================================================================
    10. タスク操作（完了 / 削除 / サブタスク / 並べ替え）
    ===================================================================== */
+/** 繰り返しタスクの回 k の完了/取り消し。繰り返しでなければ通常の toggleDone */
+async function toggleOccurrence(id, k) {
+  const t = taskById(id); if (!t) return;
+  if (!isRepeat(t)) return toggleDone(id);
+  k = k || t.dueDate;
+  const before = clone(t);
+  const wasAll = allDoneToday();
+  const wasDone = t.doneDates.includes(k);
+  if (wasDone) {
+    t.doneDates = t.doneDates.filter(x => x !== k);
+    if (k < t.dueDate) t.dueDate = k;            // 過去の回を戻したら、その回が「今回」になる
+  } else {
+    t.doneDates = [...t.doneDates, k].sort();
+    if (k === t.dueDate) t.dueDate = advancePending(t, k);
+  }
+  $$(`.task[data-id="${id}"], .inst[data-id="${id}"][data-date="${k}"]`).forEach(r => {
+    r.classList.toggle('done', !wasDone);
+    const c = r.querySelector('.chk'); if (c) c.setAttribute('aria-checked', !wasDone);
+  });
+  const delay = wasDone || reduceMotion.matches ? 0 : 450;
+  scheduleRender(delay);
+  await saveTasks(t, '完了の保存');
+  if (!wasDone) {
+    const moved = t.dueDate !== before.dueDate ? ` → 次回 ${fmtMD(t.dueDate)}` : '';
+    showUndo(`「${t.title}」${fmtMD(k)}分を完了${moved}`, async () => {
+      Object.assign(t, before); render(); await saveTasks(t, '元に戻す');
+    });
+    if (!wasAll && allDoneToday()) setTimeout(celebrate, delay + 60);
+  }
+}
+
 async function toggleDone(id) {
   const t = taskById(id); if (!t) return;
+  if (isRepeat(t)) return toggleOccurrence(id, t.dueDate);
   const l = listById(t.listId);
   const before = clone(t);
   const wasAll = allDoneToday();
@@ -1200,6 +1621,7 @@ async function toggleDone(id) {
   t.doneAt = t.done ? Date.now() : null;
 
   // 先に見た目だけ変えてアニメーションさせ、少し後に描き直す
+  $$(`.inst[data-id="${id}"]`).forEach(r => r.classList.toggle('done', t.done));
   const rows = $$(`.task[data-id="${id}"]`);
   rows.forEach(r => { r.classList.toggle('done', t.done); const c = r.querySelector('.chk'); if (c) c.setAttribute('aria-checked', t.done); });
   const shop = l.type === 'shopping';
@@ -1278,8 +1700,8 @@ async function shopAddFromInput(listId) {
   const p = parseQuick(raw, { listId });
   const target = listById(p.listId) || listById(listId);
   let res;
-  if (target.type === 'shopping') res = addShoppingItem(target.id, p.title, { quantity: p.quantity, dueDate: p.dueDate, dueTime: p.dueTime, repeat: p.repeat });
-  else { const t = newTask(target.id, p.title, { dueDate: p.dueDate, dueTime: p.dueTime, repeat: p.repeat }); S.tasks.push(t); res = { task: t }; }
+  if (target.type === 'shopping') res = addShoppingItem(target.id, p.title, { quantity: p.quantity, dueDate: p.dueDate, dueTime: p.dueTime, repeat: p.repeat, repeatDays: p.repeatDays });
+  else { const t = newTask(target.id, p.title, { dueDate: p.dueDate, dueTime: p.dueTime, repeat: p.repeat, repeatDays: p.repeatDays }); S.tasks.push(t); res = { task: t }; }
   render();
   const again = $('#shop-input'); if (again) again.focus();   // 続けて入力できるように
   showToast(res.merged ? `「${res.task.title}」の数量を ×${res.task.quantity} にしました` : `「${res.task.title}」を${target.id === listId ? '' : ` ${target.icon}${target.name} に`}追加しました`);
@@ -1470,6 +1892,9 @@ function openTaskEditor(id) {
       </div>
       <label class="field"><span>繰り返し</span><select class="inp" id="te-repeat">${Object.entries(REPEAT_LABEL).map(([k, v]) =>
         `<option value="${k}" ${(d.repeat || 'none') === k ? 'selected' : ''}>${v}${k === 'weekly' ? '（期限日の曜日）' : k === 'monthly' ? '（期限日の日付）' : ''}</option>`).join('')}</select></label>
+      <div class="field" id="te-days-wrap" ${d.repeat === 'custom' ? '' : 'hidden'}><span class="field-label">繰り返す曜日</span>
+        <div class="seg" id="te-days">${[1, 2, 3, 4, 5, 6, 0].map(w => `<button type="button" data-w="${w}" aria-pressed="${(d.repeatDays || []).includes(w)}">${WD[w]}</button>`).join('')}</div></div>
+      ${isRepeat(d) ? `<p class="seg-note" style="margin-top:-6px">期限日＝次に行う回です。これまでに ${d.doneDates.length}回 完了しています。</p>` : ''}
       ${isShopTask ? `<div class="field"><span class="field-label">数量・アイコン</span>
         <div style="display:flex;gap:10px;align-items:center">
           <div class="shop-qty big-qty"><button type="button" id="te-qm" aria-label="数量を減らす">−</button><span id="te-qty">×${d.quantity || 1}</span><button type="button" id="te-qp" aria-label="数量を増やす">＋</button></div>
@@ -1524,6 +1949,20 @@ function openTaskEditor(id) {
         $('#te-qp', el).addEventListener('click', () => setQ(d.quantity + 1));
         $('#te-title', el).addEventListener('input', e => { $('#te-icon', el).placeholder = guessEmoji(e.target.value); });
       }
+      d.repeatDays = [...(d.repeatDays || [])];
+      $('#te-repeat', el).addEventListener('change', e => {
+        $('#te-days-wrap', el).hidden = e.target.value !== 'custom';
+        if (e.target.value === 'custom' && !d.repeatDays.length) {
+          d.repeatDays = [weekday($('#te-date', el).value || dateKey())];
+          $$('#te-days button', el).forEach(b => b.setAttribute('aria-pressed', d.repeatDays.includes(+b.dataset.w)));
+        }
+      });
+      $('#te-days', el).addEventListener('click', e => {
+        const b = e.target.closest('[data-w]'); if (!b) return;
+        const w = +b.dataset.w;
+        d.repeatDays = d.repeatDays.includes(w) ? d.repeatDays.filter(x => x !== w) : [...d.repeatDays, w];
+        b.setAttribute('aria-pressed', d.repeatDays.includes(w));
+      });
       $('#te-del', el).addEventListener('click', () => { closeSheet(true); deleteTask(t.id); });
       $('#te-save', el).addEventListener('click', async () => {
         const title = $('#te-title', el).value.trim();
@@ -1533,11 +1972,17 @@ function openTaskEditor(id) {
         const dueTime = $('#te-time', el).value || null;
         const repeat = $('#te-repeat', el).value;
         if ((dueTime || repeat !== 'none') && !dueDate) dueDate = dateKey();   // 時刻・繰り返しだけ入れたら今日から
+        if (repeat === 'custom' && !d.repeatDays.length) { showToast('繰り返す曜日を選んでください'); return; }
         if (listId !== t.listId) t.order = nextOrder(listId);
+        // 繰り返しの規則か期限日が変わったら、新しい期限日を基準日にし直す
+        const ruleChanged = repeat !== (t.repeat || 'none') || dueDate !== t.dueDate
+          || (repeat === 'custom' && [...d.repeatDays].sort().join() !== [...(t.repeatDays || [])].sort().join());
         Object.assign(t, {
           title, note: $('#te-note', el).value, listId, dueDate, dueTime, priority: d.priority, repeat,
+          repeatDays: repeat === 'custom' ? d.repeatDays : [],
           subtasks: d.subtasks.filter(s => s.title.trim()).map(s => ({ ...s, title: s.title.trim() })),
         });
+        normalizeRepeat(t, { resetStart: ruleChanged });
         if (isShopTask) { t.quantity = d.quantity; t.icon = firstGrapheme($('#te-icon', el).value); }
         closeSheet(); render();
         await saveTasks(t);
@@ -1608,8 +2053,10 @@ function openListEditor(id) {
 }
 
 /** クイック追加：1行入力＋日本語解析。認識した部分はチップで表示（タップで無効化） */
-function openQuickAdd() {
+/** date を渡すと入力欄に「YYYY/M/D 」を入れておく（カレンダーの「この日に追加」用） */
+function openQuickAdd({ date = null } = {}) {
   const lists = sortedLists();
+  const prefix = date ? `${+date.slice(0, 4)}/${+date.slice(5, 7)}/${+date.slice(8)} ` : '';
   if (!lists.length) { showToast('先にリストを作成してください'); openListEditor(); return; }
   let listId = (S.route.view === 'list' && listById(S.route.listId)?.id) || listById(S.settings.lastListId)?.id || lists[0].id;
   let skip = new Set();
@@ -1626,6 +2073,7 @@ function openQuickAdd() {
       <div class="qa-fb" id="qa-fb" aria-live="polite"></div>`,
     onMount(el) {
       const input = $('#qa-input', el);
+      input.value = prefix;
       input.focus();
       const update = () => {
         const v = input.value.trim();
@@ -1658,14 +2106,14 @@ function openQuickAdd() {
         update(); input.focus();
       });
       const add = async () => {
-        if (!input.value.trim()) { input.focus(); return; }
+        if (!input.value.trim() || input.value.trim() === prefix.trim()) { input.focus(); return; }
         const p = parseQuick(input.value.trim(), { listId, skip });
         const l = listById(p.listId) || listById(listId);
         let task, merged = false;
-        if (l.type === 'shopping') ({ task, merged } = addShoppingItem(l.id, p.title, { quantity: p.quantity, dueDate: p.dueDate, dueTime: p.dueTime, repeat: p.repeat }));
-        else { task = newTask(l.id, p.title, { dueDate: p.dueDate, dueTime: p.dueTime, repeat: p.repeat }); S.tasks.push(task); }
+        if (l.type === 'shopping') ({ task, merged } = addShoppingItem(l.id, p.title, { quantity: p.quantity, dueDate: p.dueDate, dueTime: p.dueTime, repeat: p.repeat, repeatDays: p.repeatDays }));
+        else { task = newTask(l.id, p.title, { dueDate: p.dueDate, dueTime: p.dueTime, repeat: p.repeat, repeatDays: p.repeatDays }); S.tasks.push(task); }
         S.settings.lastListId = listId;
-        input.value = ''; skip = new Set(); update(); input.focus();
+        input.value = prefix; skip = new Set(); update(); input.focus();
         const extra = p.chips.filter(c => !c.off && !c.warn && c.kind !== 'list').map(c => c.label.replace(/（初回.*）/, '')).join(' ');
         $('#qa-fb', el).textContent = merged
           ? `✓ ${l.icon} ${l.name} の「${task.title}」を ×${task.quantity} にしました`
@@ -1718,6 +2166,66 @@ function celebrate() {
   box.innerHTML = `<div class="cele-msg">🎉 今日の分はすべて完了！</div>${bits}`;
   $$('.hero').forEach(h => { h.classList.remove('celebrate'); void h.offsetWidth; h.classList.add('celebrate'); });
   setTimeout(() => { box.innerHTML = ''; }, 3000);
+}
+
+/* =====================================================================
+   14-2. 時刻になったら知らせる（アプリを開いている間だけ）
+   iPhone Safari は閉じた状態での予約通知ができないため、サーバー通知は使わない。
+   時刻を過ぎて10分以内の未完了の予定を、アプリ内アラート＋(許可があれば)通知で知らせる。
+   ===================================================================== */
+const LS_NOTIFIED = 'todotiles.notified';
+let notified = { day: '', keys: new Set() };
+const toMin = hm => +hm.slice(0, 2) * 60 + +hm.slice(3, 5);
+function checkAlarms() {
+  if (!S.ready) return;
+  const today = dateKey(), hm = nowHM();
+  if (notified.day !== today) {
+    try { const o = JSON.parse(lsGet(LS_NOTIFIED) || '{}'); notified = { day: today, keys: new Set(o.day === today ? o.keys : []) }; }
+    catch { notified = { day: today, keys: new Set() }; }
+  }
+  let changed = false;
+  for (const x of instancesOn(today)) {
+    if (x.done || !x.t.dueTime || x.t.dueTime > hm) continue;
+    const key = `${x.t.id}|${x.t.dueTime}`;
+    if (notified.keys.has(key)) continue;
+    notified.keys.add(key); changed = true;
+    if (toMin(hm) - toMin(x.t.dueTime) <= 10) fireAlarm(x);
+  }
+  if (changed) lsSet(LS_NOTIFIED, JSON.stringify({ day: today, keys: [...notified.keys] }));
+}
+function fireAlarm(x) {
+  const t = x.t, l = listById(t.listId);
+  const box = $('#alarms');
+  const card = document.createElement('div');
+  card.className = 'alarm';
+  card.setAttribute('role', 'alert');
+  card.style.setProperty('--c', l.color);
+  card.innerHTML = `<div class="al-ico" aria-hidden="true">⏰</div>
+    <div class="al-text"><b>${esc(t.dueTime)}</b> ${esc(t.title)}<small>${esc(l.icon)} ${esc(l.name)}</small></div>
+    <button class="al-btn" data-al="done">完了</button><button class="al-x" data-al="close" aria-label="閉じる">✕</button>`;
+  card.addEventListener('click', e => {
+    const a = e.target.closest('[data-al]'); if (!a) return;
+    if (a.dataset.al === 'done') toggleOccurrence(t.id, x.date);
+    card.remove();
+  });
+  box.appendChild(card);
+  try { if (navigator.vibrate && navigator.userActivation && navigator.userActivation.hasBeenActive) navigator.vibrate([200, 100, 200]); } catch { /* noop */ }
+  // OSの通知（許可済みのときだけ）。iPhone はホーム画面に追加したアプリで、開いている間のみ
+  if ('Notification' in window && Notification.permission === 'granted') {
+    const title = `⏰ ${t.dueTime} ${t.title}`, opts = { body: `${l.icon} ${l.name}`, tag: `${t.id}|${t.dueTime}` };
+    (async () => {
+      try {
+        const reg = navigator.serviceWorker && await navigator.serviceWorker.getRegistration();
+        if (reg) await reg.showNotification(title, opts); else new Notification(title, opts);
+      } catch { try { new Notification(title, opts); } catch { /* 非対応 */ } }
+    })();
+  }
+}
+async function requestNotifyPermission() {
+  if (!('Notification' in window)) { showToast('このブラウザは通知に対応していません（iPhoneはホーム画面に追加すると使えます）', 4000); return; }
+  try { await Notification.requestPermission(); } catch { /* noop */ }
+  render();
+  showToast(Notification.permission === 'granted' ? '通知を許可しました' : '通知は許可されませんでした');
 }
 
 /* =====================================================================
@@ -1857,7 +2365,7 @@ document.addEventListener('click', e => {
   const id = a.dataset.id;
   switch (a.dataset.act) {
     case 'nav': go(a.dataset.to); break;
-    case 'fab': openQuickAdd(); break;
+    case 'fab': openQuickAdd({ date: S.route.view === 'calendar' && S.calAnchor !== dateKey() && S.settings.calMode === 'today' ? S.calAnchor : null }); break;
     case 'theme': cycleTheme(); break;
     case 'home-edit': S.homeEdit = !S.homeEdit; render(); break;
     case 'open-list': if (S.homeEdit) openListEditor(id); else go('#/list/' + id); break;
@@ -1870,6 +2378,14 @@ document.addEventListener('click', e => {
     case 'sub-toggle': toggleSub(id, a.dataset.sid); break;
     case 'history': if (S.historyOpen.has(id)) S.historyOpen.delete(id); else S.historyOpen.add(id); render(); break;
     case 'clear-done': clearDone(id); break;
+    case 'occ': toggleOccurrence(id, a.dataset.date); break;
+    case 'cal-move': calMove(+a.dataset.d); break;
+    case 'cal-today': S.calAnchor = dateKey(); render(true); break;
+    case 'cal-mode': S.settings.calMode = a.dataset.m; render(true); saveSettings(); break;
+    case 'cal-day': S.settings.calMode = 'today'; S.calAnchor = a.dataset.date; render(true); saveSettings(); break;
+    case 'cal-sheet': openDaySheet(a.dataset.date); break;
+    case 'cal-open-today': S.settings.calMode = 'today'; S.calAnchor = dateKey(); go('#/calendar'); saveSettings(); break;
+    case 'notify-perm': requestNotifyPermission(); break;
     case 'buy': toggleDone(id); break;
     case 'qty': changeQty(id, +a.dataset.d); break;
     case 'shop-add': shopAddFromInput(id); break;
@@ -1953,8 +2469,12 @@ if (window.visualViewport) {
    ===================================================================== */
 let lastTick = { day: dateKey(), hm: nowHM() };
 function tick() {
+  checkAlarms();
   const day = dateKey(), hm = nowHM();
   if (day === lastTick.day && hm === lastTick.hm) return;
+  if (day !== lastTick.day && S.calAnchor === lastTick.day) S.calAnchor = day;   // 日付が変わったらカレンダーも今日へ
+  const typing = document.activeElement && document.activeElement.matches('#main input, #main textarea');
+  if (typing) return;   // 入力中（買い物の追加欄など）は描き直さない。次の tick で更新
   lastTick = { day, hm };
   if (!sheetState && $('#menu').hidden && !drag && !sw) render();   // 日付・期限切れ表示の更新
 }
@@ -1975,9 +2495,11 @@ async function init() {
   }
   S.ready = true;
   applyTheme();
+  S.calAnchor = dateKey();
   S.route = parseHash();
   render();
   requestPersist();
+  checkAlarms();
   setInterval(tick, 20000);
 }
 init();
